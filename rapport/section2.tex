@@ -1,0 +1,83 @@
+\section{Exemple de section}
+
+    \subsection{Comment apprendre le \LaTeX}
+        L'usage du \LaTeX{} peut être déroutant au début (cf. figure~\ref{chien}), cette approche de la composition de document étant très loin de ce que l'on fait lorsque l'on utilise des logiciels comme Microcrotte Office ou Libre Office.
+        Sans rentrer dans les détails, il faut voir le \LaTeX{} comme un outil permettant de séparer \emph{le fond} (ce que vous allez mettre dans votre document), de \emph{la forme} (comment le fond va apparaître dans le document final).
+
+        \begin{figure}[!ht]
+            \centering % Centre horizontalement tout ce qui est dans l'environnement ``figure''
+                \includegraphics[width=0.5\textwidth]{images/tech-support-dog.jpg} % Chemin vers l'image à ajouter
+            \caption{Toi en train d'apprendre le \LaTeX.} % Légende de l'image
+            \label{chien} % Étiquette pour y faire référence ailleurs dans le document
+        \end{figure}
+        
+        Quand vous écrivez du code \LaTeX, vous vous contentez en grande majorité de décrire le fond:
+        je veux un paragraphe qui contient ce texte (on sépare deux paragraphe de texte par une ligne vide), je commence une nouvelle section/sous-section/sous-sous-section ici (en utilisant la commande \verb|\section{}|/\verb|\subsection{}|/\verb|\subsubsection{}|), je veux mettre en valeur \emph{cette partie de phrase} (en utilisant la commande \verb|\emph{}|)…
+        La forme est gérée plus tard, par un modèle de document par défaut que vous pouvez éventuellement modifier indépendamment du fond.
+
+        La meilleure manière d'apprendre à coder en \LaTeX{} est \emph{de bricoler du code \LaTeX{} et de voir ce qu'il se passe.}
+
+        \subsubsection{Quelques bonnes pratiques}
+            Je donne ici quelques lignes directrices qui, si elles sont respectées, vous éviteront un certain nombre de difficultés lors de l'écriture d'un document \LaTeX{}.
+        
+            \paragraph{Bien organiser son code source}
+                Écrire du \LaTeX{}, c'est écrire du \emph{code source}.
+                Comme vous l'avez appris à l'INSA, un bon code source doit être proprement mis en forme.
+                Je vous recommande, lorsque vous écrivez du texte, d'écrire une phrase par ligne, cela rendra votre code bien plus lisible et simplifiera l'utilisation d'un logiciel de gestion de sources comme git.
+                En ce qui concerne la lisibilité du code source, pensez à \emph{indenter} votre code afin de mieux vous y repérer.
+            
+             \paragraph{Compiler du \LaTeX{}}
+                Étant donné que le \LaTeX{} est du code source, celui-ci doit être compilé (à l'aide de la commande \verb|pdflatex| par exemple).
+                Comme pour un programme en Pascal, à la compilation il est possible que des messages d'avertissement ou d'erreur s'affichent.
+                La plupart des messages d'avertissement ne posent pas de problèmes (le document que vous lisez en émet un certain nombre à la compilation), cependant les messages d'erreur sont beaucoup plus graves et doivent être résolus pour obtenir un document final correct et complet.
+                Ce n'est pas par ce qu'à la fin de votre compilation vous obtenez un document que la compilation s'est passée sans erreur.
+                Dans la plupart des cas, aucun document n'est produit, mais certains éditeurs de \LaTeX{} \enquote{forcent} la compilation jusqu'au bout.
+                Je vous invite donc à être très attentif à comment se déroule la compilation de votre document de manière à ne pas passer à côté d'erreurs de compilation.
+                Je vous invite aussi à \emph{compiler votre document aussi souvent que possible}, cela afin de repérer le plus tôt possible les erreurs de compilation dans le code source que vous tapez.
+        
+        \subsubsection{Ressources externes}\label{sssect:ressources_externes}
+            Pour vous aider dans votre aventure d'écriture de beaux documents, voici quelques ressources sur lesquelles vous pouvez vous appuyer pour rechercher de l'information.
+            Je vous recommande d'y avoir recours quand le besoin s'en fait ressentir lorsque vous rédigez votre document.
+            
+            \paragraph{Wikilivres}
+                Les wikilivres sur le \LaTeX{} (en français et en anglais) sont particulièrement bien rédigés et traitent un grand nombre de cas de figure face auxquels on peu se retrouver:
+                \begin{itemize}
+                \item En français: \url{https://fr.wikibooks.org/wiki/LaTeX}
+                \item En anglais: \url{https://en.wikibooks.org/wiki/LaTeX}
+                \item Le vadémécum du livre français vaut le détour: \url{https://fr.wikibooks.org/wiki/LaTeX/Vad%C3%A9m%C3%A9cum}
+                \end{itemize}
+            
+            \paragraph{\LaTeX{} stack exchange}
+                Le site internet \url{https://tex.stackexchange.com/} est un espace dédié aux questions/réponses sur la thématique du \LaTeX{}.
+                Les réponses y sont souvent correctes et bien documentées (mais pas toujours! Faites preuve de recul.).
+                Les sujets abordés varient grandement en termes de complexité, à vous de vous y retrouver.
+                
+                Petite mise en garde en passant: vous copiez-collez du code depuis internet \emph{à vos risques et périls}.
+                Si vous ne comprenez les commandes que vous utilisez dans votre code, vous ne comprendrez pas les erreurs que celui-ci produit.
+                Ce n'est pas par ce qu'une personne, sur internet, à une moment donné, à proposé une idée pour faire une chose que cette idée est la bonne pour faire ce que vous voulez.
+            
+            \paragraph{Le Comprehensive \TeX{} Archive Network}
+                Pour les braves.
+                Si vous souhaitez comprendre dans le détail comment un paquet \LaTeX{} fonctionne et comment l'utiliser, vous trouverez sa documentation sur le site \url{https://www.ctan.org/}.
+                C'est souvent très instructif mais il faut être un minimum à l'aise avec le \LaTeX{} pour se plonger dans ce type de documentation.
+
+
+
+
+    \subsection{Comment ne pas apprendre le \LaTeX}
+        Comme dit précédemment, l'apprentissage du \LaTeX{} se fait par la \emph{pratique}.
+        Essayer d'apprendre à utiliser ce langage en parcourant uniquement les références données dans la section~\ref{sssect:ressources_externes} sans jamais s'aventurer à écrire du code ne vous apportera rien.
+        
+        Si à un moment vous êtes bloquez et n'arrivez pas à vous en sortir même avec l'aide de vos camarades, vous pouvez solliciter de l'aide soit auprès d'un enseignant en TP, soit éventuellement sur internet.
+        Soyez conscient que le code que vous avez écrit \emph{vous appartient}.
+        Vous en êtes responsables.
+        Si vous demandez un appui extérieur, assurez-vous de montrer que vous avez cherché à comprendre et résoudre le problème par vous-même.
+        Envoyer par mail ou sur un forum un code source qui ne compile pas en demandant à ce que votre interlocuteur le répare à votre place est le meilleur moyen de vous le mettre à dos et de recevoir un lapin pancake comme réponse (cf. figure~\ref{lapin}).
+        
+        
+        \begin{figure}[!ht]
+            \centering % Centre horizontalement tout ce qui est dans l'environnement ``figure''
+                \includegraphics[width=0.5\textwidth]{images/pancake-bunny.jpg} % Chemin vers l'image à ajouter
+            \caption{Ma réponse quand on me pose une question sur du \LaTeX{} sans avoir essayé de chercher une solution par soi-même.} % Légende de l'image
+            \label{lapin} % Étiquette pour y faire référence ailleurs dans le document
+        \end{figure}
