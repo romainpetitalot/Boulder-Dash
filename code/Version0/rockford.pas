@@ -47,13 +47,11 @@ begin
 		end;
 	end;
 	
-	T[4][3].genre := 0;
+	T[3][4].genre := 0;
 	
 end;
 
-
-
-procedure afficherfond(var window : PSDL_Surface; T : Terrain);
+procedure afficherfondDeplacement(var window : PSDL_Surface; T : Terrain);
 var fond, terre, bordure, pierre : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
@@ -85,6 +83,54 @@ begin
 		end;
 		coordfond.y := (i)*32
 	end;
+	
+	
+	SDl_Flip(window);
+	SDL_FreeSurface(fond);
+	SDL_FreeSurface(terre);
+	SDL_FreeSurface(bordure);
+	SDL_FreeSurface(pierre);
+end;
+
+procedure afficherfond(var window, rockford : PSDL_Surface; T : Terrain; position : coordonnees);
+var fond, terre, bordure, pierre : PSDL_Surface;
+	coordfond : TSDL_Rect;
+	i, j : Integer;
+begin
+	fond := IMG_Load('ressources/fond.png');
+	terre := IMG_Load('ressources/terre.png');
+	bordure := IMG_Load('ressources/bordure.png');
+	pierre := IMG_Load('ressources/pierre.png');
+	
+	coordfond.x := 0;
+	coordfond.y := 0;
+	
+	for i := 1 to largueur do
+	begin
+		for j := 1 to longueur do
+		begin
+			coordfond.x := (j-1)*32;
+			
+			case T[i][j].genre of
+			
+				1 : SDL_BlitSurface(terre, NIL, window,@coordfond);
+				
+				2 :	SDL_BlitSurface(bordure, NIL, window,@coordfond);				
+			
+				3 : SDL_BlitSurface(pierre, NIL, window,@coordfond);
+				
+				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
+			end;		
+		end;
+		coordfond.y := (i)*32
+	end;
+	
+	coordfond.x := 32*(position.x-1);
+	coordfond.y := 32*(position.y-1);
+	
+	SDL_BlitSurface(rockford, NIL, window,@coordfond);
+	
+	
 	SDl_Flip(window);
 	SDL_FreeSurface(fond);
 	SDL_FreeSurface(terre);
@@ -116,19 +162,19 @@ begin
 	for i := 1 to 1 do
 	begin
 		coordRF.x := coordRF.x + sens*8;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF1, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(20);
 		
 		coordRF.x := coordRF.x + sens*12;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF2, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(20);
 		
 		coordRF.x := coordRF.x + sens*12;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF3, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(20);
@@ -172,25 +218,25 @@ begin
 	for i := 1 to 1 do
 	begin
 		coordRF.y := coordRF.y + sens*8;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF1, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(15);
 		
 		coordRF.y := coordRF.y + sens*8;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF2, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(15);
 		
 		coordRF.y := coordRF.y + sens*8;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF3, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(15);
 		
 		coordRF.y := coordRF.y + sens*8;
-		afficherfond(window, T);
+		afficherfondDeplacement(window, T);
 		SDL_BlitSurface(RF4, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(15);
@@ -206,7 +252,7 @@ begin
 end;
 
 
-procedure tombement(var window : PSDL_Surface; i, j : Integer; T : Terrain);
+procedure tombement(var window, rockford : PSDL_Surface; i, j : Integer; T : Terrain; position : coordonnees);
 var coordPiR : TSDL_Rect;
 	pierre : PSDL_Surface;
 	k : Integer;
@@ -218,11 +264,11 @@ begin
 	
 	for k := 1 to 4 do
 	begin
-		afficherfond(window, T);
+		afficherfond(window, rockford, T, position);
 		SDL_BlitSurface(pierre, NIL, window,@coordPiR);
 		coordPiR.y := coordPiR.y + 8;
 		SDl_Flip(window);
-		SDl_Delay(10);
+		SDl_Delay(8);
 	end;
 	
 
@@ -230,7 +276,7 @@ begin
 end;
 
 
-procedure tombePierre(var window : Psdl_Surface; var T:Terrain; pos : coordonnees; var accel : Boolean);
+procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; pos : coordonnees; position : coordonnees);
 var i, j : Integer;
 begin
 	for i := 1 to largueur do
@@ -239,13 +285,11 @@ begin
 		begin
 			if T[i][j].genre = 3 then
 			begin
-				if T[i+1][j].genre = 0 then
+				if (T[i+1][j].genre = 0) and not((position.y = i+1) and (position.x = j)) then
 				begin
 					T[i][j].genre := 0;
-					tombement(window, i, j, T);
+					tombement(window, rockford, i, j, T, position);
 					T[i+1][j].genre := 3;
-					
-					//afficherfond(window, T);
 				end;
 			end;		
 		end;
@@ -253,15 +297,112 @@ begin
 	SDL_Delay(10);
 end;
 
-var window, rockford : PSDL_Surface;
-	coord : TSDL_Rect;
-	fin, accel : Boolean;
-	event : TSDL_Event;
-	position : coordonnees;
-	T : Terrain;
+
+
+
+
+procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect; var fin, u, d, r, l : Boolean);
+var event : TSDL_event;
 	bloquer : Boolean;
 begin
+	SDL_PollEvent(@event);
 	
+	bloquer := False;
+	
+	case event.type_ of
+		SDL_KEYDOWN : 
+		
+			case event.key.keysym.sym of 
+				SDLK_escape : fin := True;
+				SDLK_UP : u := True;
+				SDLK_DOWN : d := True;
+				SDLK_right : r := True;
+				SDLK_left : l := True;
+		end;
+
+		SDL_KEYUP : 
+		
+			case event.key.keysym.sym of 
+				SDLK_UP : u := False;
+				SDLK_DOWN : d := False;
+				SDLK_right : r := False;
+				SDLK_left : l := False;
+		end;
+	end;
+	
+	
+	if u then 
+	begin
+		
+		if T[position.y-1][position.x].genre = 1 then T[position.y-1][position.x].genre := 0; 
+		
+		if not(T[position.y-1][position.x].genre = 2) and not(T[position.y-1][position.x].genre = 3) then 
+			deplacementRockFordVert(window, 'haut', coord, -1, position.y, T);
+	end;
+	
+	if d then 
+	begin
+		if T[position.y+1][position.x].genre = 1 then T[position.y+1][position.x].genre := 0;
+	
+		if not(T[position.y+1][position.x].genre = 2) and not(T[position.y+1][position.x].genre = 3) then 
+			deplacementRockFordVert(window, 'bas', coord, 1, position.y, T);
+	end;
+		
+	if r then 
+	begin
+		if T[position.y][position.x+1].genre = 1 then T[position.y][position.x+1].genre := 0;
+		
+		if T[position.y][position.x+1].genre = 3 then
+		begin
+			if T[position.y][position.x+2].genre = 0 then
+			begin
+				T[position.y][position.x+1].genre := 0;
+				T[position.y][position.x+2].genre := 3;
+				bloquer := False;
+				SDL_Delay(10);
+			end
+			else bloquer := True					
+		
+		end;
+		
+		if not(T[position.y][position.x+1].genre = 2) and not(bloquer) then
+		deplacementRockFordhoriz(window, 'droite', coord, 1, position.x, T);
+	end;
+	
+	if l then
+	begin
+		if T[position.y][position.x-1].genre = 1 then T[position.y][position.x-1].genre := 0;		
+		
+		if T[position.y][position.x-1].genre = 3 then
+		begin
+			if T[position.y][position.x-2].genre = 0 then
+			begin
+				T[position.y][position.x-1].genre := 0;
+				T[position.y][position.x-2].genre := 3;
+				bloquer := False;
+				SDL_Delay(10);
+			end
+			else bloquer := True					
+		
+		end;
+		
+		if not(T[position.y][position.x-1].genre = 2) and not(bloquer) then
+		deplacementRockFordhoriz(window, 'gauche', coord, -1, position.x, T);
+	end;
+	
+	tombePierre(window, rockford, T, position, position);
+	SDL_Delay(4);
+end;
+
+
+
+var window, rockford : PSDL_Surface;
+	coord : TSDL_Rect;
+	fin : Boolean;
+	position : coordonnees;
+	T : Terrain;
+	u, d, r, l : Boolean;
+begin
 	initialise(window, rockford);
 	
 	position.x := 4;
@@ -273,83 +414,16 @@ begin
 	fin := False;
 	
 	formationTerre(T);
-	afficherfond(window, T);
+	afficherfond(window, rockford, T, position);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);
 	SDl_Delay(20);
 	
-	accel := False;
+	u := False;	d := False;
+	r := False;	l := False;
 	
 	repeat
-		//writeln('x = ',position.x,'  y = ',position.y);
-		SDL_PollEvent(@event);
-		if event.type_ = SDL_KEYDOWN then
-		begin
-		
-			bloquer := False;
-			tombePierre(window, T, position, accel);
-			
-			case event.key.keysym.sym of 
-				SDLK_escape : fin := True;
-				SDLK_up : 
-				begin
-					if T[position.y-1][position.x].genre = 1 then T[position.y-1][position.x].genre := 0; 
-					
-					if not(T[position.y-1][position.x].genre = 2) and not(T[position.y-1][position.x].genre = 3) then 
-						deplacementRockFordVert(window, 'haut', coord, -1, position.y, T);
-				end;
-				SDLK_down : 
-				begin
-					if T[position.y+1][position.x].genre = 1 then T[position.y+1][position.x].genre := 0;
-				
-					if not(T[position.y+1][position.x].genre = 2) and not(T[position.y+1][position.x].genre = 3) then 
-						deplacementRockFordVert(window, 'bas', coord, 1, position.y, T);
-				end;
-				SDLK_right : 
-				begin
-					if T[position.y][position.x+1].genre = 1 then T[position.y][position.x+1].genre := 0;
-					
-					if T[position.y][position.x+1].genre = 3 then
-					begin
-						if T[position.y][position.x+2].genre = 0 then
-						begin
-							T[position.y][position.x+1].genre := 0;
-							T[position.y][position.x+2].genre := 3;
-							bloquer := False;
-							SDL_Delay(10);
-						end
-						else bloquer := True					
-					
-					end;
-					
-					if not(T[position.y][position.x+1].genre = 2) and not(bloquer) then
-					deplacementRockFordhoriz(window, 'droite', coord, 1, position.x, T);
-				end;
-				SDLK_left : 
-				begin
-					if T[position.y][position.x-1].genre = 1 then T[position.y][position.x-1].genre := 0;
-					
-					
-					if T[position.y][position.x-1].genre = 3 then
-					begin
-						if T[position.y][position.x-2].genre = 0 then
-						begin
-							T[position.y][position.x-1].genre := 0;
-							T[position.y][position.x-2].genre := 3;
-							bloquer := False;
-							SDL_Delay(10);
-						end
-						else bloquer := True					
-					
-					end;
-					
-					if not(T[position.y][position.x-1].genre = 2) and not(bloquer) then
-					deplacementRockFordhoriz(window, 'gauche', coord, -1, position.x, T);
-				end;
-			end;
-		end;
-		
+		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l);
 		writeln('x = ',position.x,'  y = ',position.y);
-		
 	until fin
 end.
