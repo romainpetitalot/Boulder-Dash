@@ -17,6 +17,7 @@ end;
 
 Type Terrain = array[1..50,1..50] of block;
 
+
 procedure initialise( var window, rockford : PSDL_Surface);
 begin
 	SDL_Init(SDL_INIT_VIDEO + SDL_INIT_AUDIO);
@@ -394,7 +395,33 @@ begin
 	SDL_Delay(4);
 end;
 
-
+procedure chargement (name : string; var T : Terrain);
+var fic	: Text;
+	i, j : Integer;
+	str: String;
+begin
+	assign(fic,name + '.txt');
+	reset(fic);
+	j:=1;
+	while (not eof(fic)) do
+	begin
+		readln(fic,str);
+		for i := 1 to 50 do
+		begin
+			if (str[i] = '0') then
+				T[i][j].genre := 0
+			else if (str[i] = '1') then
+				T[i][j].genre := 1
+			else if (str[i] = '2') then
+				T[i][j].genre := 2
+			else if (str[i] = '3') then
+				T[i][j].genre := 3;
+			T[i][j].afficher := True;
+		end;
+			j:=j+1;	
+	end;
+	close(fic);
+end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
