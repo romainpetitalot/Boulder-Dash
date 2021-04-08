@@ -402,23 +402,23 @@ var fic	: Text;
 begin
 	assign(fic,name + '.txt');
 	reset(fic);
-	j:=1;
+	i:=1;
 	while (not eof(fic)) do
 	begin
 		readln(fic,str);
-		for i := 1 to 50 do
+		for j := 1 to 24 do
 		begin
-			if (str[i] = '0') then
+			if (str[j] = '0') then
 				T[i][j].genre := 0
-			else if (str[i] = '1') then
+			else if (str[j] = '1') then
 				T[i][j].genre := 1
-			else if (str[i] = '2') then
+			else if (str[j] = '2') then
 				T[i][j].genre := 2
-			else if (str[i] = '3') then
+			else if (str[j] = '3') then
 				T[i][j].genre := 3;
 			T[i][j].afficher := True;
 		end;
-			j:=j+1;	
+			i:=i+1;	
 	end;
 	close(fic);
 end;
@@ -439,8 +439,10 @@ begin
 	coord.y := 32*(position.y-1);
 	
 	fin := False;
-	
+	chargement('ressources/Niveaux v1/v1-1',T);
+{
 	formationTerre(T);
+}
 	afficherfond(window, rockford, T, position);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);
