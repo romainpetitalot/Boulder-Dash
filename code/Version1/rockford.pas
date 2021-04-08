@@ -269,7 +269,9 @@ begin
 		SDL_BlitSurface(pierre, NIL, window,@coordPiR);
 		coordPiR.y := coordPiR.y + 8;
 		SDl_Flip(window);
+
 		SDl_Delay(8);
+
 	end;
 	
 
@@ -439,7 +441,7 @@ begin
 	coord.y := 32*(position.y-1);
 	
 	fin := False;
-	chargement('ressources/Niveaux v1/v1-1',T);
+	chargement('ressources/Niveaux v1/v1-2',T);
 {
 	formationTerre(T);
 }
