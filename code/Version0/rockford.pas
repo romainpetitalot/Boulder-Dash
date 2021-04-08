@@ -12,11 +12,10 @@ end;
 
 Type block = record
 	genre : Integer;
-	afficher : Boolean;
+	afficher, mouvement, Pierre1 : Boolean;
 end;
 
 Type Terrain = array[1..50,1..50] of block;
-
 
 procedure initialise( var window, rockford : PSDL_Surface);
 begin
@@ -29,10 +28,8 @@ begin
 	SDL_ShowCursor(SDL_DISABLE);
 end;
 
-
-procedure formationTerre (var T : Terrain);
-var i, j : Integer;
-	
+procedure formationTerre (var T : Terrain); //On charge la map aléatoirement pour l'instant
+var i, j : Integer;	
 begin
 	randomize;
 	for i := 1 to largueur do
@@ -40,19 +37,19 @@ begin
 		for j := 1 to longueur do
 		begin
 			if (random(3)<2) then T[i][j].genre := 1
-			else if (random(3)<2) then T[i][j].genre := 3;
-			
-			if (i = 1) or (i = largueur) or (j=1) or (j=longueur) then T[i][j].genre := 2;
-			
-			//writeln(i,' ',j,' ',T[i][j].genre);
+			else if (random(3)<2) then 
+			begin
+				T[i][j].genre := 3;
+				T[i][j].mouvement := False;
+				T[i][j].Pierre1 := False;
+			end;
+			if (i = 1) or (i = largueur) or (j=1) or (j=longueur) then T[i][j].genre := 2;	
 		end;
 	end;
-	
 	T[3][4].genre := 0;
-	
 end;
 
-procedure afficherfondDeplacement(var window : PSDL_Surface; T : Terrain);
+procedure afficherfondDeplacement(var window : PSDL_Surface;var T : Terrain);
 var fond, terre, bordure, pierre : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
@@ -80,11 +77,27 @@ begin
 				3 : SDL_BlitSurface(pierre, NIL, window,@coordfond);
 				
 				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
-			end;		
+			end;
 		end;
 		coordfond.y := (i)*32
 	end;
 	
+	for i := 1 to largueur do
+	begin
+		for j := 1 to longueur do
+		begin
+			coordfond.x := (j-1)*32;
+						
+			if T[i][j].Pierre1 then
+			begin
+				coordfond.y := coordfond.y + 16;
+				SDL_BlitSurface(pierre, NIL, window,@coordfond);
+				coordfond.y := coordfond.y - 16;
+				//T[i][j].Pierre1 := False;
+			end;
+		end;
+		coordfond.y := (i)*32
+	end;
 	
 	SDl_Flip(window);
 	SDL_FreeSurface(fond);
@@ -121,7 +134,24 @@ begin
 				3 : SDL_BlitSurface(pierre, NIL, window,@coordfond);
 				
 				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
-			end;		
+			end;	
+		end;
+		coordfond.y := (i)*32
+	end;
+	
+	for i := 1 to largueur do
+	begin
+		for j := 1 to longueur do
+		begin
+			coordfond.x := (j-1)*32;
+						
+			if T[i][j].Pierre1 then
+			begin
+				coordfond.y := coordfond.y + 16;
+				SDL_BlitSurface(pierre, NIL, window,@coordfond);
+				coordfond.y := coordfond.y - 16;
+				//T[i][j].Pierre1 := False;
+			end;
 		end;
 		coordfond.y := (i)*32
 	end;
@@ -130,7 +160,6 @@ begin
 	coordfond.y := 32*(position.y-1);
 	
 	SDL_BlitSurface(rockford, NIL, window,@coordfond);
-	
 	
 	SDl_Flip(window);
 	SDL_FreeSurface(fond);
@@ -179,7 +208,6 @@ begin
 		SDL_BlitSurface(RF3, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(20);
-	
 	end;
 	
 	SDL_FreeSurface(RF1);
@@ -187,7 +215,6 @@ begin
 	SDL_FreeSurface(RF3);
 	
 	pos := pos + sens;
-	
 end;
 
 procedure deplacementRockFordVert(var window : PSDL_Surface; direction : String; var coordRF : TSDL_Rect; sens : Integer; var pos : Integer; var T : Terrain);
@@ -241,7 +268,6 @@ begin
 		SDL_BlitSurface(RF4, NIL, window,@coordRF);
 		SDl_Flip(window);
 		SDl_Delay(15);
-	
 	end;
 	
 	SDL_FreeSurface(RF1);
@@ -253,53 +279,40 @@ begin
 end;
 
 
-procedure tombement(var window, rockford : PSDL_Surface; i, j : Integer; T : Terrain; position : coordonnees);
-var coordPiR : TSDL_Rect;
-	pierre : PSDL_Surface;
-	k : Integer;
-begin
-	pierre := IMG_Load('ressources/pierre.png');
-	
-	coordPiR.x := 32 * (j-1);
-	coordPiR.y := 32 * (i-1);
-	
-	for k := 1 to 4 do
-	begin
-		afficherfond(window, rockford, T, position);
-		SDL_BlitSurface(pierre, NIL, window,@coordPiR);
-		coordPiR.y := coordPiR.y + 8;
-		SDl_Flip(window);
-		SDl_Delay(8);
-	end;
-	
-
-	SDL_FreeSurface(pierre);
-end;
-
-
 procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; pos : coordonnees; position : coordonnees);
 var i, j : Integer;
+	pierre : PSDL_Surface;
 begin
+	pierre := IMG_Load('ressources/pierre.png');
 	for i := 1 to largueur do
 	begin
 		for j := 1 to longueur do
 		begin
+			if T[i][j].mouvement then
+			begin
+				T[i+1][j].genre := 3;
+				T[i][j].Pierre1 := False;
+				afficherfond(window, rockford, T, position);
+				T[i][j].mouvement := false;
+				if (position.y = i+2) and (position.x = j) then 
+					writeln('dead');
+			end;
 			if T[i][j].genre = 3 then
 			begin
 				if (T[i+1][j].genre = 0) and not((position.y = i+1) and (position.x = j)) then
 				begin
 					T[i][j].genre := 0;
-					tombement(window, rockford, i, j, T, position);
-					T[i+1][j].genre := 3;
+					T[i][j].mouvement := True;
+					T[i][j].Pierre1 := True;
+					afficherfond(window, rockford, T, position);
+					SDL_Flip(window);
 				end;
-			end;		
+			end;
+					
 		end;
 	end;
-	SDL_Delay(10);
+	SDL_FreeSurface(pierre);
 end;
-
-
-
 
 
 procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect; var fin, u, d, r, l : Boolean);
@@ -357,6 +370,7 @@ begin
 		begin
 			if T[position.y][position.x+2].genre = 0 then
 			begin
+				SDL_Delay(50);
 				T[position.y][position.x+1].genre := 0;
 				T[position.y][position.x+2].genre := 3;
 				bloquer := False;
@@ -378,21 +392,20 @@ begin
 		begin
 			if T[position.y][position.x-2].genre = 0 then
 			begin
+				SDL_Delay(50);
 				T[position.y][position.x-1].genre := 0;
 				T[position.y][position.x-2].genre := 3;
 				bloquer := False;
 				SDL_Delay(10);
 			end
 			else bloquer := True					
-		
-		end;
-		
+		end;		
 		if not(T[position.y][position.x-1].genre = 2) and not(bloquer) then
 		deplacementRockFordhoriz(window, 'gauche', coord, -1, position.x, T);
 	end;
 	
 	tombePierre(window, rockford, T, position, position);
-	SDL_Delay(4);
+	SDL_Delay(20);
 end;
 
 procedure chargement (name : string; var T : Terrain);
@@ -451,6 +464,5 @@ begin
 	
 	repeat
 		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l);
-		writeln('x = ',position.x,'  y = ',position.y);
 	until fin
 end.
