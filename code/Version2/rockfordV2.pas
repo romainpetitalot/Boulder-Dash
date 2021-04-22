@@ -1,6 +1,6 @@
 program Rockfrd;
 
-uses SDL, sdl_image, sysutils;
+uses SDL, sdl_image, sysutils,menurockford;
 
 CONST longueur = 24;
 		largueur = 20;
@@ -498,6 +498,7 @@ var window, rockford : PSDL_Surface;
 	T : Terrain;
 	u, d, r, l : Boolean;
 begin
+	menu(fin);
 	initialise(window, rockford);
 	randomize();
 	position.x := 4;
