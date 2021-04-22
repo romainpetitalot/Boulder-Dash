@@ -473,13 +473,10 @@ var window, rockford : PSDL_Surface;
 	u, d, r, l : Boolean;
 begin
 	initialise(window, rockford);
-	
 	position.x := 4;
 	position.y := 3;
-	
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1);
-	
 	fin := False;
 	chargement('ressources/Niveaux v1/v1-2',T);
 {

@@ -492,21 +492,29 @@ end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
+	niv : Integer;
 	fin : Boolean;
 	position : coordonnees;
 	T : Terrain;
 	u, d, r, l : Boolean;
 begin
 	initialise(window, rockford);
-	
+	randomize();
 	position.x := 4;
 	position.y := 3;
-	
+	niv := random(10) + 1;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1);
 	
 	fin := False;
-	chargement('ressources/Niveaux v1/v1-2',T);
+	chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T);
+{
+* pour charger le niveau sauvegarder ou les niveaux normaux avec le menu :
+	if play = 1 then
+		chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T);
+	else if play = 2 then
+		chargement('ressources/Niveaux v1/save,T);
+}
 {
 	formationTerre(T);
 }
