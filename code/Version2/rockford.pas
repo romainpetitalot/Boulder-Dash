@@ -465,7 +465,29 @@ begin
 end;
 
 procedure SauvegarderNiveau(var T : Terrain);
+var fic	: Text;
+	i, j : Integer;
 begin
+	assign(fic,'ressources/Niveaux v1/save.txt');
+	reset(fic);
+	rewrite(fic);
+	j:=1;
+	for j:= 1 to 24 do
+	begin
+		for i := 1 to 24 do
+			if T[i][j].genre = 0 then
+				write(fic,'0')
+			else if T[i][j].genre = 1 then
+				write(fic,'1')
+			else if T[i][j].genre = 2 then
+				write(fic,'2')
+			else if T[i][j].genre = 3 then
+				write(fic,'3')
+			else if T[i][j].genre = 4 then
+				write(fic,'4');
+			writeln(fic,'');
+	end;
+	close(fic);
 end;
 
 var window, rockford : PSDL_Surface;
