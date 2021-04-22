@@ -464,6 +464,9 @@ begin
 	close(fic);
 end;
 
+procedure SauvegarderNiveau(var T : Terrain);
+begin
+end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
