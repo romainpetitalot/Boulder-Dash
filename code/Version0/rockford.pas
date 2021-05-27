@@ -428,7 +428,11 @@ begin
 			else if (str[j] = '2') then
 				T[i][j].genre := 2
 			else if (str[j] = '3') then
+			begin
 				T[i][j].genre := 3;
+				T[i][j].mouvement := False;
+				T[i][j].Pierre1 := False;
+			end;
 			T[i][j].afficher := True;
 		end;
 			i:=i+1;	
