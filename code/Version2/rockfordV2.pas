@@ -12,8 +12,8 @@ end;
 
 Type block = record
 	genre : Integer;
-	afficher : Boolean;
-	mouvement : String;
+	Used : Boolean;
+	mouvement, orientation : String;
 end;
 
 Type Terrain = array[1..50,1..50] of block;
@@ -31,7 +31,7 @@ end;
 
 
 procedure afficherfondDeplacement(var window : PSDL_Surface;var T : Terrain);
-var fond, terre, bordure, pierre, diamant, port : PSDL_Surface;
+var fond, terre, bordure, pierre, diamant, port, spider : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
 begin
@@ -41,6 +41,8 @@ begin
 	pierre := IMG_Load('ressources/pierre.png');
 	diamant := IMG_Load('ressources/Diamond1.png');
 	port := IMG_Load('ressources/Port1.png');
+	spider := IMG_Load('ressources/Spider2.png');
+
 	coordfond.x := 0;
 	coordfond.y := 0;
 	
@@ -61,6 +63,8 @@ begin
 				4 : SDL_BlitSurface(diamant, NIL, window,@coordfond);
 				
 				5 : SDL_BlitSurface(port, NIL, window,@coordfond);
+		
+				6 : SDL_BlitSurface(spider, NIL, window,@coordfond);
 		
 				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
 			end;
@@ -100,10 +104,11 @@ begin
 	SDL_FreeSurface(diamant);
 	SDL_FreeSurface(port);
 	SDL_FreeSurface(pierre);
+	SDL_FreeSurface(spider);
 end;
 
 procedure afficherfond(var window, rockford : PSDL_Surface; T : Terrain; position : coordonnees);
-var fond, terre, bordure, pierre, diamant, port : PSDL_Surface;
+var fond, terre, bordure, pierre, diamant, port, spider : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
 begin
@@ -113,6 +118,8 @@ begin
 	pierre := IMG_Load('ressources/pierre.png');
 	diamant := IMG_Load('ressources/Diamond1.png');
 	port := IMG_Load('ressources/Port1.png');
+	spider := IMG_Load('ressources/Spider2.png');
+
 	coordfond.x := 0;
 	coordfond.y := 0;
 	
@@ -132,6 +139,8 @@ begin
 				4 : SDL_BlitSurface(diamant, NIL, window,@coordfond);
 				
 				5 : SDL_BlitSurface(port, NIL, window,@coordfond);
+				
+				6 : SDL_BlitSurface(spider, NIL, window,@coordfond);
 								
 				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
 			end;	
@@ -176,6 +185,7 @@ begin
 	SDL_FreeSurface(diamant);	
 	SDL_FreeSurface(port);	
 	SDL_FreeSurface(pierre);
+	SDL_FreeSurface(spider);
 end;
 
 procedure deplacementRockFordHoriz(var window : PSDL_Surface; direction : String; var coordRF : TSDL_Rect; sens : Integer; var pos : Integer; var T : Terrain);
@@ -310,6 +320,20 @@ begin
 				afficherfond(window, rockford, T, position);
 				if (position.y = i+2) and (position.x = j) then 
 					writeln('dead');
+				if T[i+2][j].genre = 6 then
+				begin
+					T[i+1][j-1].genre := 4;
+					T[i+1][j].genre := 4;
+					T[i+1][j+1].genre := 4;
+					
+					T[i+2][j-1].genre := 4;
+					T[i+2][j].genre := 4;
+					T[i+2][j+1].genre := 4;
+					
+					T[i+3][j-1].genre := 4;
+					T[i+3][j].genre := 4;
+					T[i+3][j+1].genre := 4;
+				end;
 			end;
 			if T[i][j].genre = numeroObj then
 			begin
@@ -320,12 +344,110 @@ begin
 					afficherfond(window, rockford, T, position);
 					SDL_Flip(window);
 				end;
-			end;
-					
+			end;					
 		end;
 	end;
 end;
 
+
+procedure moveSpiderAntiClockwise(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees );
+var i, j : Integer;
+begin
+	for i := 1 to largueur do
+	begin
+		for j := 1 to longueur do
+		begin
+			T[i][j].Used := False;
+		end;
+	end;
+	
+	for i := 1 to largueur do
+	begin
+		for j := 1 to longueur do
+		begin			
+			if (T[i][j].genre = 6) and not(T[i][j].Used) then
+			begin
+				writeln(T[i][j].orientation);
+				case T[i][j].orientation of
+					'haut' :
+					begin
+						if T[i][j+1].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i][j+1].genre := 6;
+							T[i][j+1].orientation := 'droite';
+							T[i][j+1].Used := True;	//Pour ne pas refaire bouger le même car on retombera dessus dans la boucle for						
+						end
+						else if T[i-1][j].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i-1][j].genre := 6;
+							T[i-1][j].orientation := 'haut';				
+						end
+						else
+							T[i][j].orientation := 'gauche'
+					end;					
+					'gauche' :
+					begin
+						if T[i-1][j].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i-1][j].genre := 6;
+							T[i-1][j].orientation := 'haut';				
+						end
+						else if T[i][j-1].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i][j-1].genre := 6;
+							T[i][j-1].orientation := 'gauche';
+						end
+						else
+							T[i][j].orientation := 'bas'					
+					end;					
+					'bas' :
+					begin
+						if T[i][j-1].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i][j-1].genre := 6;
+							T[i][j-1].orientation := 'gauche';
+						end
+						else if T[i+1][j].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i+1][j].genre := 6;
+							T[i+1][j].orientation := 'bas';
+							T[i+1][j].Used := True;	
+						end
+						else
+							T[i][j].orientation := 'droite'
+					end;
+					'droite' :
+					begin
+						if T[i+1][j].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i+1][j].genre := 6;
+							T[i+1][j].orientation := 'bas';
+							T[i+1][j].Used := True;							
+						end
+						else if T[i][j+1].genre = 0 then
+						begin
+							T[i][j].genre := 0;
+							T[i][j+1].genre := 6;
+							T[i][j+1].orientation := 'droite';
+							T[i][j+1].Used := True;							
+						end
+						else
+							T[i][j].orientation := 'haut'
+					end;
+				end;	
+				afficherfond(window, rockford, T, position);
+				SDL_Flip(window);	
+			end;
+		end;
+	end;
+end;
 
 procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l : Boolean;var nbDiamant:Integer);
 var event : TSDL_event;
@@ -442,10 +564,12 @@ begin
 	if (position.x = 19) and (position.y = 19) and portActive then
 		fin := True;
 	
-	if random(2)<1 then
+	if random(3)<2 then
 	begin
 		tombePierre(window, rockford, T, position, 'Pierre');
 		tombePierre(window, rockford, T, position, 'Diamant');
+		if random(7)<1 then	
+			moveSpiderAntiClockwise(window, rockford, T, position);
 	end;
 	SDL_Delay(20);
 end;
@@ -470,20 +594,13 @@ begin
 				'3':T[i][j].genre := 3;
 				'4':T[i][j].genre := 4;
 				'5':T[i][j].genre := 5;
+				'6':
+				begin
+					T[i][j].genre := 6;
+					T[i][j].orientation := 'bas';
+				end;
 			end;
-			{
-			if (str[j] = '0') then
-				T[i][j].genre := 0
-			else if (str[j] = '1') then
-				T[i][j].genre := 1
-			else if (str[j] = '2') then
-				T[i][j].genre := 2
-			else if (str[j] = '3') then
-				T[i][j].genre := 3
-			else if (str[j] = '4') then
-				T[i][j].genre := 4;
-			}
-			T[i][j].afficher := True;
+			
 			T[i][j].mouvement := '';
 		end;
 			i:=i+1;	
@@ -509,19 +626,9 @@ begin
 				3:write(fic,'3');
 				4:write(fic,'4');
 				5:write(fic,'5');
+				6:write(fic,'6');
 			end;
-			{if T[i][j].genre = 0 then
-				write(fic,'0')
-			else if T[i][j].genre = 1 then
-				write(fic,'1')
-			else if T[i][j].genre = 2 then
-				write(fic,'2')
-			else if T[i][j].genre = 3 then
-				write(fic,'3')
-			else if T[i][j].genre = 4 then
-				write(fic,'4')
-			else if T[i][j].genre = 5 then
-				write(fic,'5');}
+			
 			writeln(fic,'');
 	end;
 	close(fic);
