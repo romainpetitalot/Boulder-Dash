@@ -12,7 +12,8 @@ end;
 
 Type block = record
 	genre : Integer;
-	afficher, mouvement, Pierre1 : Boolean;
+	afficher : Boolean;
+	mouvement : String;
 end;
 
 Type Terrain = array[1..50,1..50] of block;
@@ -28,29 +29,9 @@ begin
 	SDL_ShowCursor(SDL_DISABLE);
 end;
 
-procedure formationTerre (var T : Terrain); //On charge la map aléatoirement pour l'instant
-var i, j : Integer;	
-begin
-	randomize;
-	for i := 1 to largueur do
-	begin
-		for j := 1 to longueur do
-		begin
-			if (random(3)<2) then T[i][j].genre := 1
-			else if (random(3)<2) then 
-			begin
-				T[i][j].genre := 3;
-				T[i][j].mouvement := False;
-				T[i][j].Pierre1 := False;
-			end;
-			if (i = 1) or (i = largueur) or (j=1) or (j=longueur) then T[i][j].genre := 2;	
-		end;
-	end;
-	T[3][4].genre := 0;
-end;
 
 procedure afficherfondDeplacement(var window : PSDL_Surface;var T : Terrain);
-var fond, terre, bordure, pierre, diamant : PSDL_Surface;
+var fond, terre, bordure, pierre, diamant, port : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
 begin
@@ -59,6 +40,7 @@ begin
 	bordure := IMG_Load('ressources/bordure.png');
 	pierre := IMG_Load('ressources/pierre.png');
 	diamant := IMG_Load('ressources/Diamond1.png');
+	port := IMG_Load('ressources/Port1.png');
 	coordfond.x := 0;
 	coordfond.y := 0;
 	
@@ -78,24 +60,34 @@ begin
 				
 				4 : SDL_BlitSurface(diamant, NIL, window,@coordfond);
 				
+				5 : SDL_BlitSurface(port, NIL, window,@coordfond);
+		
 				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
 			end;
 		end;
 		coordfond.y := (i)*32
 	end;
 	
-	for i := 1 to largueur do
+	for i := 1 to largueur do //Lorsqu'une Pierre ou un diamant est en train de tomber
 	begin
 		for j := 1 to longueur do
 		begin
 			coordfond.x := (j-1)*32;
 						
-			if T[i][j].Pierre1 then
+			if T[i][j].mouvement = 'Pierre' then
 			begin
 				coordfond.y := coordfond.y + 16;
+				
 				SDL_BlitSurface(pierre, NIL, window,@coordfond);
 				coordfond.y := coordfond.y - 16;
-				//T[i][j].Pierre1 := False;
+			end;
+						
+			if T[i][j].mouvement = 'Diamant' then
+			begin
+				coordfond.y := coordfond.y + 16;
+				
+				SDL_BlitSurface(diamant, NIL, window,@coordfond);
+				coordfond.y := coordfond.y - 16;
 			end;
 		end;
 		coordfond.y := (i)*32
@@ -106,11 +98,12 @@ begin
 	SDL_FreeSurface(terre);
 	SDL_FreeSurface(bordure);
 	SDL_FreeSurface(diamant);
+	SDL_FreeSurface(port);
 	SDL_FreeSurface(pierre);
 end;
 
 procedure afficherfond(var window, rockford : PSDL_Surface; T : Terrain; position : coordonnees);
-var fond, terre, bordure, pierre, diamant : PSDL_Surface;
+var fond, terre, bordure, pierre, diamant, port : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
 begin
@@ -119,6 +112,7 @@ begin
 	bordure := IMG_Load('ressources/bordure.png');
 	pierre := IMG_Load('ressources/pierre.png');
 	diamant := IMG_Load('ressources/Diamond1.png');
+	port := IMG_Load('ressources/Port1.png');
 	coordfond.x := 0;
 	coordfond.y := 0;
 	
@@ -129,7 +123,6 @@ begin
 			coordfond.x := (j-1)*32;
 			
 			case T[i][j].genre of
-			
 				1 : SDL_BlitSurface(terre, NIL, window,@coordfond);
 				
 				2 :	SDL_BlitSurface(bordure, NIL, window,@coordfond);				
@@ -138,6 +131,8 @@ begin
 				
 				4 : SDL_BlitSurface(diamant, NIL, window,@coordfond);
 				
+				5 : SDL_BlitSurface(port, NIL, window,@coordfond);
+								
 				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
 			end;	
 		end;
@@ -149,13 +144,21 @@ begin
 		for j := 1 to longueur do
 		begin
 			coordfond.x := (j-1)*32;
-						
-			if T[i][j].Pierre1 then
+			
+			if T[i][j].mouvement = 'Pierre' then
 			begin
 				coordfond.y := coordfond.y + 16;
+				
 				SDL_BlitSurface(pierre, NIL, window,@coordfond);
 				coordfond.y := coordfond.y - 16;
-				//T[i][j].Pierre1 := False;
+			end;
+						
+			if T[i][j].mouvement = 'Diamant' then
+			begin
+				coordfond.y := coordfond.y + 16;
+				
+				SDL_BlitSurface(diamant, NIL, window,@coordfond);
+				coordfond.y := coordfond.y - 16;
 			end;
 		end;
 		coordfond.y := (i)*32
@@ -171,6 +174,7 @@ begin
 	SDL_FreeSurface(terre);
 	SDL_FreeSurface(bordure);
 	SDL_FreeSurface(diamant);	
+	SDL_FreeSurface(port);	
 	SDL_FreeSurface(pierre);
 end;
 
@@ -286,58 +290,33 @@ end;
 
 
 
-procedure tombement(var window, rockford : PSDL_Surface; i, j : Integer; T : Terrain; position : coordonnees);
-var coordPiR : TSDL_Rect;
-	pierre : PSDL_Surface;
-	k : Integer;
+
+procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees; nomObjet:string );
+var i, j, numeroObj : Integer;
 begin
-	pierre := IMG_Load('ressources/pierre.png');
+	if nomObjet = 'Pierre' then
+		numeroObj := 3
+	else if nomObjet = 'Diamant' then
+		numeroObj := 4;
 	
-	coordPiR.x := 32 * (j-1);
-	coordPiR.y := 32 * (i-1);
-	
-	for k := 1 to 4 do
-	begin
-		afficherfond(window, rockford, T, position);
-		SDL_BlitSurface(pierre, NIL, window,@coordPiR);
-		coordPiR.y := coordPiR.y + 8;
-		SDl_Flip(window);
-
-		SDl_Delay(8);
-
-	end;
-	
-
-	SDL_FreeSurface(pierre);
-end;
-
-
-
-procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; pos : coordonnees; position : coordonnees);
-var i, j : Integer;
-	pierre : PSDL_Surface;
-begin
-	pierre := IMG_Load('ressources/pierre.png');
 	for i := 1 to largueur do
 	begin
 		for j := 1 to longueur do
 		begin
-			if T[i][j].mouvement then
+			if T[i][j].mouvement = nomObjet then
 			begin
-				T[i+1][j].genre := 3;
-				T[i][j].Pierre1 := False;
+				T[i+1][j].genre := numeroObj;
+				T[i][j].mouvement := '';
 				afficherfond(window, rockford, T, position);
-				T[i][j].mouvement := false;
 				if (position.y = i+2) and (position.x = j) then 
 					writeln('dead');
 			end;
-			if T[i][j].genre = 3 then
+			if T[i][j].genre = numeroObj then
 			begin
 				if (T[i+1][j].genre = 0) and not((position.y = i+1) and (position.x = j)) then
 				begin
 					T[i][j].genre := 0;
-					T[i][j].mouvement := True;
-					T[i][j].Pierre1 := True;
+					T[i][j].mouvement := nomObjet;
 					afficherfond(window, rockford, T, position);
 					SDL_Flip(window);
 				end;
@@ -345,16 +324,22 @@ begin
 					
 		end;
 	end;
-	SDL_FreeSurface(pierre);
 end;
 
 
-procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect; var fin, u, d, r, l : Boolean);
+procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l : Boolean;var nbDiamant:Integer);
 var event : TSDL_event;
-	bloquer : Boolean;
+	bloquer, portActive : Boolean;
 begin
 	SDL_PollEvent(@event);
 	bloquer := False;
+	portActive := False;
+	
+	if nbDiamant > 1 then
+	begin
+		T[19][19].genre := 5;
+		portActive := True
+	end;
 	
 	case event.type_ of
 		SDL_KEYDOWN : 
@@ -377,8 +362,12 @@ begin
 	
 	if u then 
 	begin
-		
 		if T[position.y-1][position.x].genre = 1 then T[position.y-1][position.x].genre := 0; 
+		if T[position.y-1][position.x].genre = 4 then
+		begin
+			T[position.y-1][position.x].genre := 0; 
+			nbDiamant := nbDiamant + 1
+		end;
 		
 		if not(T[position.y-1][position.x].genre = 2) and not(T[position.y-1][position.x].genre = 3) then 
 			deplacementRockFordVert(window, 'haut', coord, -1, position.y, T);
@@ -387,6 +376,12 @@ begin
 	if d then 
 	begin
 		if T[position.y+1][position.x].genre = 1 then T[position.y+1][position.x].genre := 0;
+		if T[position.y+1][position.x].genre = 4 then
+		begin
+			T[position.y+1][position.x].genre := 0; 
+			nbDiamant := nbDiamant + 1
+		end;
+		
 	
 		if not(T[position.y+1][position.x].genre = 2) and not(T[position.y+1][position.x].genre = 3) then 
 			deplacementRockFordVert(window, 'bas', coord, 1, position.y, T);
@@ -395,6 +390,11 @@ begin
 	if r then 
 	begin
 		if T[position.y][position.x+1].genre = 1 then T[position.y][position.x+1].genre := 0;
+		if T[position.y][position.x+1].genre = 4 then
+		begin
+			T[position.y][position.x+1].genre := 0; 
+			nbDiamant := nbDiamant + 1
+		end;
 		
 		if T[position.y][position.x+1].genre = 3 then
 		begin
@@ -417,6 +417,11 @@ begin
 	if l then
 	begin
 		if T[position.y][position.x-1].genre = 1 then T[position.y][position.x-1].genre := 0;		
+		if T[position.y][position.x-1].genre = 4 then
+		begin
+			T[position.y][position.x-1].genre := 0; 
+			nbDiamant := nbDiamant + 1
+		end;
 		
 		if T[position.y][position.x-1].genre = 3 then
 		begin
@@ -434,7 +439,14 @@ begin
 		deplacementRockFordhoriz(window, 'gauche', coord, -1, position.x, T);
 	end;
 	
-	tombePierre(window, rockford, T, position, position);
+	if (position.x = 19) and (position.y = 19) and portActive then
+		fin := True;
+	
+	if random(2)<1 then
+	begin
+		tombePierre(window, rockford, T, position, 'Pierre');
+		tombePierre(window, rockford, T, position, 'Diamant');
+	end;
 	SDL_Delay(20);
 end;
 
@@ -451,6 +463,15 @@ begin
 		readln(fic,str);
 		for j := 1 to 24 do
 		begin
+			case str[j] of
+				'0':T[i][j].genre := 0;
+				'1':T[i][j].genre := 1;
+				'2':T[i][j].genre := 2;
+				'3':T[i][j].genre := 3;
+				'4':T[i][j].genre := 4;
+				'5':T[i][j].genre := 5;
+			end;
+			{
 			if (str[j] = '0') then
 				T[i][j].genre := 0
 			else if (str[j] = '1') then
@@ -461,7 +482,9 @@ begin
 				T[i][j].genre := 3
 			else if (str[j] = '4') then
 				T[i][j].genre := 4;
+			}
 			T[i][j].afficher := True;
+			T[i][j].mouvement := '';
 		end;
 			i:=i+1;	
 	end;
@@ -479,7 +502,15 @@ begin
 	for j:= 1 to 24 do
 	begin
 		for i := 1 to 24 do
-			if T[i][j].genre = 0 then
+			case T[i][j].genre of
+				0:write(fic,'0');
+				1:write(fic,'1');
+				2:write(fic,'2');
+				3:write(fic,'3');
+				4:write(fic,'4');
+				5:write(fic,'5');
+			end;
+			{if T[i][j].genre = 0 then
 				write(fic,'0')
 			else if T[i][j].genre = 1 then
 				write(fic,'1')
@@ -488,7 +519,9 @@ begin
 			else if T[i][j].genre = 3 then
 				write(fic,'3')
 			else if T[i][j].genre = 4 then
-				write(fic,'4');
+				write(fic,'4')
+			else if T[i][j].genre = 5 then
+				write(fic,'5');}
 			writeln(fic,'');
 	end;
 	close(fic);
@@ -496,7 +529,7 @@ end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
-	niv : Integer;
+	niv, nbDiamant : Integer;
 	fin : Boolean;
 	position : coordonnees;
 	T : Terrain;
@@ -513,16 +546,7 @@ begin
 	
 	fin := False;
 	chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T);
-{
-* pour charger le niveau sauvegarder ou les niveaux normaux avec le menu :
-	if play = 1 then
-		chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T);
-	else if play = 2 then
-		chargement('ressources/Niveaux v1/save,T);
-}
-{
-	formationTerre(T);
-}
+
 	afficherfond(window, rockford, T, position);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);
@@ -530,8 +554,9 @@ begin
 	
 	u := False;	d := False;
 	r := False;	l := False;
+	nbDiamant := 0;
 	
 	repeat
-		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l);
+		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l, nbDiamant);
 	until fin
 end.
