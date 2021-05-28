@@ -279,6 +279,34 @@ begin
 end;
 
 
+
+procedure tombement(var window, rockford : PSDL_Surface; i, j : Integer; T : Terrain; position : coordonnees);
+var coordPiR : TSDL_Rect;
+	pierre : PSDL_Surface;
+	k : Integer;
+begin
+	pierre := IMG_Load('ressources/pierre.png');
+	
+	coordPiR.x := 32 * (j-1);
+	coordPiR.y := 32 * (i-1);
+	
+	for k := 1 to 4 do
+	begin
+		afficherfond(window, rockford, T, position);
+		SDL_BlitSurface(pierre, NIL, window,@coordPiR);
+		coordPiR.y := coordPiR.y + 8;
+		SDl_Flip(window);
+
+		SDl_Delay(8);
+
+	end;
+	
+
+	SDL_FreeSurface(pierre);
+end;
+
+
+
 procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; pos : coordonnees; position : coordonnees);
 var i, j : Integer;
 	pierre : PSDL_Surface;
@@ -440,6 +468,7 @@ begin
 	close(fic);
 end;
 
+
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
 	fin : Boolean;
@@ -448,15 +477,12 @@ var window, rockford : PSDL_Surface;
 	u, d, r, l : Boolean;
 begin
 	initialise(window, rockford);
-	
 	position.x := 4;
 	position.y := 3;
-	
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1);
-	
 	fin := False;
-	chargement('ressources/Niveaux v1/v1-1',T);
+	chargement('ressources/Niveaux v1/v1-2',T);
 {
 	formationTerre(T);
 }
