@@ -665,5 +665,7 @@ begin
 	
 	repeat
 		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l, nbDiamant);
-	until fin
+	until fin;
+	SDL_FreeSurface(window);
+	SDL_Quit();
 end.
