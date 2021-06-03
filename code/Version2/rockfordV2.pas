@@ -492,9 +492,12 @@ end;
 procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l : Boolean;var nbDiamant, Chrono, OldChrono:Integer);
 var event : TSDL_event;
 	portActive : Boolean;
+	oldNbDiamant : Integer;
 begin
 	SDL_PollEvent(@event);
 	portActive := False;
+	
+	oldNbDiamant := nbDiamant;
 	
 	if nbDiamant > 1 then
 	begin
@@ -534,10 +537,18 @@ begin
 			moveSpiderAntiClockwise(window, rockford, T, position);
 	end;
 	
-	ecrire(window, IntToStr(OldChrono), 100, 5, 35, 0, 0, 0);
-	SDL_Flip(window);
-	ecrire(window, IntToStr(Chrono), 100, 5, 35, 255, 255, 255);
 	
+	ecrire(window, IntToStr(OldChrono), 100, 5, 35, 0, 0, 0);
+	if Chrono < 10 then
+		ecrire(window, IntToStr(Chrono), 100, 5, 35, 255, 0, 0)
+	else
+		ecrire(window, IntToStr(Chrono), 100, 5, 35, 255, 255, 255);
+	
+	ecrire(window, IntToStr(oldNbDiamant), 200, 5, 35, 0, 0, 0);
+	if nbDiamant > 1 then
+		ecrire(window, IntToStr(nbDiamant), 200, 5, 35, 255, 228, 54)
+	else
+		ecrire(window, IntToStr(nbDiamant), 200, 5, 35, 255, 255, 255);
 	SDL_Flip(window);
 	SDL_Delay(20);
 end;
