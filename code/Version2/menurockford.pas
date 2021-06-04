@@ -13,7 +13,7 @@ Type coord = record
 	choix: Integer;
 end;
 
-procedure menu(var fin : Boolean);
+procedure menu(var fin : Boolean;var choix : Integer);
 
 implementation
 
@@ -82,7 +82,7 @@ begin
 end;
 
 
-procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coord; var window,curseur,menu,reg : PSDL_Surface; var fin : Boolean );
+procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coord; var window,curseur,menu,reg : PSDL_Surface; var fin : Boolean; var choix : Integer );
 
 begin
 	case key.keysym.sym of
@@ -105,9 +105,14 @@ begin
 							case bouge.choix of
 								1 : begin
 										fin:=True;
+										choix := 1;
 									end;
 								2 : begin
+										fin:=True;
+{
 										affichepara(window,reg,bouge);
+}
+										choix := 2;
 									end;
 								3 : begin
 										HALT;
@@ -134,7 +139,7 @@ begin
 	Mix_CloseAudio ();
 end;
 
-procedure menu(var fin : Boolean);
+procedure menu(var fin : Boolean;var choix : Integer);
 
 var window, fond ,curseur,parametres: PSDL_Surface;
 	event : TSDL_Event;
@@ -159,7 +164,7 @@ begin
 		{ On lit un evenement et on agit en consequence }
 		SDL_PollEvent (@event);
 		if event.type_ = SDL_KEYDOWN then
-			processKey ( event.key , button,window,curseur,fond,parametres,fin);
+			processKey ( event.key , button,window,curseur,fond,parametres,fin,choix);
 	end;
 termine_musique(sound);
 termine(window, fond);
