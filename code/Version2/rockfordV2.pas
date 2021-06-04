@@ -489,7 +489,7 @@ begin
 end;
 
 
-procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l : Boolean;var nbDiamant, Chrono, OldChrono:Integer);
+procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l, save : Boolean;var nbDiamant, Chrono, OldChrono:Integer);
 var event : TSDL_event;
 	portActive : Boolean;
 	oldNbDiamant : Integer;
@@ -508,7 +508,7 @@ begin
 	case event.type_ of
 		SDL_KEYDOWN : 
 			case event.key.keysym.sym of 
-				SDLK_escape : fin := True;
+				SDLK_escape : save := True;
 				SDLK_UP : u := True;
 				SDLK_DOWN : d := True;
 				SDLK_right : r := True;
@@ -595,9 +595,9 @@ begin
 	reset(fic);
 	rewrite(fic);
 	j:=1;
-	for j:= 1 to 24 do
+	for i := 1 to 24 do
 	begin
-		for i := 1 to 24 do
+		 for j:= 1 to 24 do
 			case T[i][j].genre of
 				0:write(fic,'0');
 				1:write(fic,'1');
@@ -616,10 +616,9 @@ end;
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
 	niv, nbDiamant, Temps, TempsInit, reserveTemps, OldTemps : Integer;
-	fin : Boolean;
 	position : coordonnees;
 	T : Terrain;
-	u, d, r, l : Boolean;
+	fin,u, d, r, l,save : Boolean;
 begin
 	menu(fin);
 	initialise(window, rockford);
@@ -631,7 +630,15 @@ begin
 	coord.y := 32*(position.y-1) + 50;
 	
 	fin := False;
+
+
 	chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T);
+
+
+
+{
+	chargement('ressources/Niveaux v1/save',T); // pouvoir y jouer grâce au menu
+}
 
 	afficherfond(window, rockford, T, position, True);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
@@ -646,10 +653,12 @@ begin
 	TempsInit := SDL_GetTicks() div 1000;
 	repeat
 		Temps := reserveTemps - (SDL_GetTicks() - TempsInit) div 1000;
-		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l, nbDiamant, Temps, OldTemps);
+		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l,save, nbDiamant, Temps, OldTemps);
 		OldTemps := Temps;
 		writeln(Temps);		
-	until fin;
+	until fin or save;
+	if save then
+		SauvegarderNiveau(T);
 	SDL_FreeSurface(window);
 	SDL_Quit();
 end.
