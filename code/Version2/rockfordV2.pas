@@ -479,10 +479,11 @@ begin
 end;
 
 
-procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l, save : Boolean;var nbDiamant, Chrono, OldChrono:Integer);
+procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l, save : Boolean;var nbDiamant, Chrono, OldChrono, reserveTemps:Integer);
 var event : TSDL_event;
 	portActive, Bouger : Boolean;
 	oldNbDiamant, Rrgb, Vrgb, Brgb : Integer;
+	TempsChoixDebut : LongInt;
 begin
 	SDL_PollEvent(@event);
 	portActive := False;
@@ -500,9 +501,16 @@ begin
 			case event.key.keysym.sym of 
 				SDLK_escape : 
 				begin
-					choixFin(window, fin, save, T);//save := True;
+					TempsChoixDebut := SDL_GetTicks();
+					choixFin(window, fin, save, T);
 					if not(save) and not(fin) then
+					begin
+						if Chrono + (SDL_GetTicks()-TempsChoixDebut)div 1000<=60 then
+							reserveTemps := reserveTemps + (SDL_GetTicks()-TempsChoixDebut)div 1000
+						else
+							reserveTemps := reserveTemps + Chrono + (SDL_GetTicks()-TempsChoixDebut)div 1000 - 60;
 						afficherfond(window, rockford, T, position, True);
+					end;
 				end;
 				SDLK_UP : u := True;
 				SDLK_DOWN : d := True;
@@ -664,7 +672,7 @@ begin
 	writeln(TempsInit);
 	repeat
 		Temps := reserveTemps - (SDL_GetTicks()div 1000 - TempsInit) ;
-		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l,save, nbDiamant, Temps, OldTemps);
+		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l,save, nbDiamant, Temps, OldTemps, reserveTemps);
 		OldTemps := Temps;
 		//writeln(Temps);		
 	until fin or save;
