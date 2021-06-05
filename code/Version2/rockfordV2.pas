@@ -243,10 +243,43 @@ begin
 	pos := pos + sens;
 end;
 
+procedure mortPapillon(var T:Terrain; posX, posY : Integer; var nbDiamant : Integer; positionRF : coordonnees);
+
+begin
+	if T[posY][posX-1].genre <> 2 then
+	begin
+		if (posX-1 = positionRF.x) and (posY = positionRF.y) then
+		begin
+			nbDiamant := nbDiamant +1;
+			T[posY][posX-1].genre := 0;
+		end
+		else
+			T[posY][posX-1].genre := 4;
+	end;
+	if T[posY][posX].genre <> 2 then
+	begin
+		if (posX = positionRF.x) and (posY = positionRF.y) then
+		begin
+			nbDiamant := nbDiamant +1;
+			T[posY][posX].genre := 0;
+		end
+		else
+			T[posY][posX].genre := 4;
+	end;
+	if T[posY][posX+1].genre <> 2 then
+	begin
+		if (posX+1 = positionRF.x) and (posY = positionRF.y) then
+		begin
+			nbDiamant := nbDiamant +1;
+			T[posY][posX+1].genre := 0;
+		end
+		else
+			T[posY][posX+1].genre := 4;
+	end;
+end;
 
 
-
-procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees; nomObjet:string );
+procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees; nomObjet:string; var nbDiamant : Integer );
 var i, j, numeroObj : Integer;
 begin
 	if nomObjet = 'Pierre' then
@@ -267,17 +300,11 @@ begin
 					writeln('dead');
 				if T[i+2][j].genre = 6 then
 				begin
-					T[i+1][j-1].genre := 4;
-					T[i+1][j].genre := 4;
-					T[i+1][j+1].genre := 4;
+					mortPapillon(T, j,i+1, nbDiamant, position);
 					
-					T[i+2][j-1].genre := 4;
-					T[i+2][j].genre := 4;
-					T[i+2][j+1].genre := 4;
+					mortPapillon(T, j,i+2, nbDiamant, position);
 					
-					T[i+3][j-1].genre := 4;
-					T[i+3][j].genre := 4;
-					T[i+3][j+1].genre := 4;
+					mortPapillon(T, j,i+3, nbDiamant, position);
 				end;
 			end;
 			if T[i][j].genre = numeroObj then
@@ -288,6 +315,14 @@ begin
 					T[i][j].mouvement := nomObjet;
 					afficherfond(window, rockford, T, position, True);
 					SDL_Flip(window);
+				end
+				else if (T[i+1][j].genre = 6)then
+				begin
+					mortPapillon(T, j,i, nbDiamant, position);
+					
+					mortPapillon(T, j,i+1, nbDiamant, position);
+					
+					mortPapillon(T, j,i+2, nbDiamant, position);
 				end;
 			end;					
 		end;
@@ -531,12 +566,10 @@ begin
 
 	if (position.x = 19) and (position.y = 19) and portActive then
 		fin := True;
-	if Bouger then
-		writeln(random(1000));
 	if Bouger or (random(5)<2) then
 	begin
-		tombePierre(window, rockford, T, position, 'Pierre');
-		tombePierre(window, rockford, T, position, 'Diamant');
+		tombePierre(window, rockford, T, position, 'Pierre', nbDiamant);
+		tombePierre(window, rockford, T, position, 'Diamant', nbDiamant);
 		if random(7)<1 then	
 			moveSpiderAntiClockwise(window, rockford, T, position);
 	end;
@@ -641,7 +674,7 @@ begin
 	randomize();
 	position.x := 4;
 	position.y := 3;
-	niv := random(10) + 1;
+	niv := 1; //random(10) + 
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
 	
@@ -667,14 +700,11 @@ begin
 	nbDiamant := 0;
 	
 	reserveTemps := 60;
-	writeln('atotiejgoizegoezigoizegoezjgozegoezijg');
 	TempsInit := SDL_GetTicks() div 1000;
-	writeln(TempsInit);
 	repeat
 		Temps := reserveTemps - (SDL_GetTicks()div 1000 - TempsInit) ;
 		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l,save, nbDiamant, Temps, OldTemps, reserveTemps);
-		OldTemps := Temps;
-		//writeln(Temps);		
+		OldTemps := Temps;	
 	until fin or save;
 	if save then
 		SauvegarderNiveau(T);
