@@ -141,13 +141,14 @@ begin
 	SDL_FreeSurface(spider);
 end;
 
-procedure deplacementRockFordHoriz(var window : PSDL_Surface; direction : String; var coordRF : TSDL_Rect; sens : Integer; var pos : Integer; var T : Terrain);
+procedure deplacementRockFordHoriz(var window:PSDL_Surface;direction:String;var coordRF:TSDL_Rect;sens:Integer;var pos : Integer;var T : Terrain;var Bouger:Boolean);
 var RF1, RF2, RF3, SurfaceFake : PSDL_Surface;
 	chemin : String;
 	pimage : PChar;
 	i : Integer;
 	coordFake : coordonnees;
 begin
+	Bouger := True;
 	chemin := 'ressources/'+direction+'1.png';
 	pimage := StrAlloc(length(chemin)+1);
 	strPCopy(pimage, chemin);
@@ -191,13 +192,14 @@ begin
 	pos := pos + sens;
 end;
 
-procedure deplacementRockFordVert(var window : PSDL_Surface; direction : String; var coordRF : TSDL_Rect; sens : Integer; var pos : Integer; var T : Terrain);
+procedure deplacementRockFordVert(var window:PSDL_Surface;direction:String;var coordRF : TSDL_Rect;sens : Integer;var pos : Integer;var T:Terrain;var Bouger:Boolean);
 var RF1, RF2, RF3, RF4, SurfaceFake : PSDL_Surface;
 	chemin : String;
 	pimage : PChar;
 	i : Integer;
 	coordFake : coordonnees;
 begin
+	Bouger := True;
 	chemin := 'ressources/'+direction+'1.png';
 	pimage := StrAlloc(length(chemin)+1);
 	strPCopy(pimage, chemin);
@@ -405,7 +407,7 @@ begin
 end;
 
 
-procedure gestionDeplacement(var window : Psdl_Surface; var T:Terrain; u, d, r, l : Boolean; var position : coordonnees; var coord : TSDL_Rect; var nbDiamant:Integer);
+procedure gestionDeplacement(var window : Psdl_Surface; var T:Terrain;u, d, r, l : Boolean;var Bouger :Boolean; var position : coordonnees; var coord : TSDL_Rect; var nbDiamant:Integer);
 var bloquer : Boolean;
 begin
 	bloquer := False;
@@ -419,7 +421,7 @@ begin
 		end;
 		
 		if not(T[position.y-1][position.x].genre = 2) and not(T[position.y-1][position.x].genre = 3) then 
-			deplacementRockFordVert(window, 'haut', coord, -1, position.y, T);
+			deplacementRockFordVert(window, 'haut', coord, -1, position.y, T, Bouger);
 	end;
 	
 	if d then 
@@ -432,10 +434,10 @@ begin
 		end;
 		
 		if not(T[position.y+1][position.x].genre = 2) and not(T[position.y+1][position.x].genre = 3) then 
-			deplacementRockFordVert(window, 'bas', coord, 1, position.y, T);
+			deplacementRockFordVert(window, 'bas', coord, 1, position.y, T, Bouger);
 	end;
 		
-	if r then 
+	if r then
 	begin
 		if T[position.y][position.x+1].genre = 1 then T[position.y][position.x+1].genre := 0;
 		if T[position.y][position.x+1].genre = 4 then
@@ -459,7 +461,7 @@ begin
 		end;
 		
 		if not(T[position.y][position.x+1].genre = 2) and not(bloquer) then
-		deplacementRockFordhoriz(window, 'droite', coord, 1, position.x, T);
+			deplacementRockFordhoriz(window, 'droite', coord, 1, position.x, T, Bouger);
 	end;
 	
 	if l then
@@ -484,19 +486,19 @@ begin
 			else bloquer := True					
 		end;		
 		if not(T[position.y][position.x-1].genre = 2) and not(bloquer) then
-			deplacementRockFordhoriz(window, 'gauche', coord, -1, position.x, T);
+			deplacementRockFordhoriz(window, 'gauche', coord, -1, position.x, T, Bouger);
 	end;
 end;
 
 
 procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l, save : Boolean;var nbDiamant, Chrono, OldChrono:Integer);
 var event : TSDL_event;
-	portActive : Boolean;
+	portActive, Bouger : Boolean;
 	oldNbDiamant : Integer;
 begin
 	SDL_PollEvent(@event);
 	portActive := False;
-	
+	Bouger := False;
 	oldNbDiamant := nbDiamant;
 	
 	if nbDiamant > 1 then
@@ -508,7 +510,7 @@ begin
 	case event.type_ of
 		SDL_KEYDOWN : 
 			case event.key.keysym.sym of 
-				SDLK_escape : save := True;
+				SDLK_escape : choixFin(window, fin, save);//save := True;
 				SDLK_UP : u := True;
 				SDLK_DOWN : d := True;
 				SDLK_right : r := True;
@@ -524,12 +526,13 @@ begin
 		end;
 	end;
 
-	gestionDeplacement(window, T, u, d, r, l, position, coord, nbDiamant);
+	gestionDeplacement(window, T, u, d, r, l, Bouger, position, coord, nbDiamant);
 
 	if (position.x = 19) and (position.y = 19) and portActive then
 		fin := True;
-	
-	if random(3)<2 then
+	if Bouger then
+		writeln(random(1000));
+	if Bouger or (random(5)<2) then
 	begin
 		tombePierre(window, rockford, T, position, 'Pierre');
 		tombePierre(window, rockford, T, position, 'Diamant');
@@ -615,25 +618,32 @@ end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
-	niv, nbDiamant, Temps, TempsInit, reserveTemps, OldTemps,choix : Integer;
+	niv, nbDiamant, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2 : Integer;
 	position : coordonnees;
 	T : Terrain;
 	fin,u, d, r, l,save : Boolean;
 begin
-	menu(fin,choix);
+	menu(fin,ch1,ch2);
 	initialise(window, rockford);
 	randomize();
 	position.x := 4;
 	position.y := 3;
-	niv := 1; //random(10) + 1;
+	niv := random(10) + 1;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
 	
 	fin := False;
-	if choix = 1 then
-		chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T)
+	if ch1 = 1 then
+		begin
+			if ch2 = 1 then
+				chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T)
+			else if ch2 = 2 then
+				chargement('ressources/Niveaux v1/v2-' + IntToStr(niv),T)
+			else if ch2 = 3 then
+				chargement('ressources/Niveaux v1/v3-' + IntToStr(niv),T);
+		end
 	else
-	chargement('ressources/Niveaux v1/save',T); // pouvoir y jouer grâce au menu
+		chargement('ressources/Niveaux v1/save',T); // pouvoir y jouer grâce au menu
 	afficherfond(window, rockford, T, position, True);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);
@@ -644,12 +654,14 @@ begin
 	nbDiamant := 0;
 	
 	reserveTemps := 60;
+	writeln('atotiejgoizegoezigoizegoezjgozegoezijg');
 	TempsInit := SDL_GetTicks() div 1000;
+	writeln(TempsInit);
 	repeat
-		Temps := reserveTemps - (SDL_GetTicks() - TempsInit) div 1000;
+		Temps := reserveTemps - (SDL_GetTicks()div 1000 - TempsInit) ;
 		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l,save, nbDiamant, Temps, OldTemps);
 		OldTemps := Temps;
-		writeln(Temps);		
+		//writeln(Temps);		
 	until fin or save;
 	if save then
 		SauvegarderNiveau(T);
