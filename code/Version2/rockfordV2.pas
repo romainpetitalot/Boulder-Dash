@@ -1,22 +1,10 @@
 program Rockfrd;
 
-uses SDL, sdl_image, sdl_ttf, sysutils,menurockford;
+uses SDL, sdl_image, sdl_ttf, sysutils,menurockford, rockfordUtils;
 
 CONST longueur = 24;
 		largueur = 20;
 
-Type coordonnees = record
-	x : Integer;
-	y : Integer;	
-end;
-
-Type block = record
-	genre : Integer;
-	Used : Boolean;
-	mouvement, orientation : String;
-end;
-
-Type Terrain = array[1..50,1..50] of block;
 
 procedure initialise( var window, rockford : PSDL_Surface);
 begin
@@ -494,7 +482,7 @@ end;
 procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l, save : Boolean;var nbDiamant, Chrono, OldChrono:Integer);
 var event : TSDL_event;
 	portActive, Bouger : Boolean;
-	oldNbDiamant : Integer;
+	oldNbDiamant, Rrgb, Vrgb, Brgb : Integer;
 begin
 	SDL_PollEvent(@event);
 	portActive := False;
@@ -510,7 +498,12 @@ begin
 	case event.type_ of
 		SDL_KEYDOWN : 
 			case event.key.keysym.sym of 
-				SDLK_escape : choixFin(window, fin, save);//save := True;
+				SDLK_escape : 
+				begin
+					choixFin(window, fin, save, T);//save := True;
+					if not(save) and not(fin) then
+						afficherfond(window, rockford, T, position, True);
+				end;
 				SDLK_UP : u := True;
 				SDLK_DOWN : d := True;
 				SDLK_right : r := True;
@@ -540,17 +533,29 @@ begin
 			moveSpiderAntiClockwise(window, rockford, T, position);
 	end;
 	
-	ecrire(window, IntToStr(OldChrono), 100, 5, 35, 0, 0, 0);
+	Rrgb := 0; Vrgb := 0; Brgb :=0;
+	ecrire(window, IntToStr(OldChrono), 100, 5, 35, Rrgb, Vrgb, Brgb);
 	if Chrono < 10 then
-		ecrire(window, IntToStr(Chrono), 100, 5, 35, 255, 0, 0)
+	begin
+		Rrgb := 255; Vrgb := 0; Brgb :=0
+	end
 	else
-		ecrire(window, IntToStr(Chrono), 100, 5, 35, 255, 255, 255);
+	begin
+		Rrgb := 255; Vrgb := 255; Brgb :=255;
+	end;
+	ecrire(window, IntToStr(Chrono), 100, 5, 35, Rrgb, Vrgb, Brgb);
 	
-	ecrire(window, IntToStr(oldNbDiamant), 200, 5, 35, 0, 0, 0);
+	Rrgb := 0; Vrgb := 0; Brgb :=0;
+	ecrire(window, IntToStr(oldNbDiamant), 200, 5, 35, Rrgb, Vrgb, Brgb);
 	if nbDiamant > 1 then
-		ecrire(window, IntToStr(nbDiamant), 200, 5, 35, 255, 228, 54)
+	begin
+		Rrgb := 255; Vrgb := 228; Brgb :=54
+	end
 	else
-		ecrire(window, IntToStr(nbDiamant), 200, 5, 35, 255, 255, 255);
+	begin
+		Rrgb := 255; Vrgb := 255; Brgb :=255;
+	end;
+	ecrire(window, IntToStr(nbDiamant), 200, 5, 35, Rrgb, Vrgb, Brgb);
 		
 	SDL_Flip(window);
 	SDL_Delay(20);

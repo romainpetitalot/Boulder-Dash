@@ -2,20 +2,11 @@ unit menurockford;
 
 interface
 
-uses SDL, sdl_image, sdl_mixer,sdl_ttf, sysutils;
-CONST longueur = 24;
-		largueur = 20;
-	AUDIO_CHUNKSIZE :INTEGER=4096;
-	MVT = 180;
-
-Type coord = record
-	x,y: Integer ;
-	choix: Integer;
-end;
+uses SDL, sdl_image, sdl_mixer,sdl_ttf, sysutils, rockfordUtils;
 
 procedure menu(var fin : Boolean;var ch1,ch2 : Integer);
 
-procedure choixFin(var window : PSDL_Surface; var fin, save : Boolean);
+procedure choixFin(var window : PSDL_Surface; var fin, save : Boolean; T : Terrain);
 
 implementation
 
@@ -54,8 +45,9 @@ begin
 	SDL_Flip ( window )
 end;
 
-procedure affichecurseur (var window, curseur : PSDL_SURFACE; position : coord);
+procedure affichecurseur (var window : PSDL_SURFACE; position : coordMenu);
 var destination_rect : TSDL_RECT ;
+	curseur : PSDL_SURFACE;
 begin
 	curseur:= IMG_Load('ressources/face.png');
 	{ Choix de la position et taille de l ’ element a afficher }
@@ -67,47 +59,33 @@ begin
 	SDL_BlitSurface ( curseur , NIL , window , @destination_rect );
 	{ Afficher la nouvelle image }
 	SDL_Flip ( window );
+	SDL_FreeSurface( curseur );
 end;
 
 
 
-procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coord; var window,curseur,menu : PSDL_Surface; var fin : Boolean; var choix : Integer );
+procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coordMenu; var window,menu : PSDL_Surface; var fin : Boolean; var choix : Integer );
 
 begin
 	case key.keysym.sym of
 		SDLK_DOWN : begin 
 						bouge.x:=bouge.x;
 						bouge.choix:= (bouge.choix+1) mod 3;
-						writeln(bouge.choix);
 						bouge.y:=170+MVT*bouge.choix;
 						affiche(window,menu);
-						affichecurseur(window,curseur,bouge);
-														
+						affichecurseur(window,bouge);
 					end;
 		SDLK_UP : begin 
 						bouge.x:=bouge.x;
 						bouge.choix:=(bouge.choix-1+3) mod 3; //Pour qu'on puisse retourner sur l'option du haut avec la flèche du bas quand on est en bas
-						writeln(bouge.choix);
 						bouge.y:=170+MVT*bouge.choix;
 						affiche(window,menu);
-						affichecurseur(window,curseur,bouge);
+						affichecurseur(window,bouge);
 					end;
 		SDLK_RETURN : begin
-							case bouge.choix of
-								0 : begin
-										fin:=True;
-										choix := 1;
-									end;
-								1 : begin
-										fin:=True;
-										choix := 2;
-									end;
-								2 : begin
-										fin:=True;
-										choix := 3;
-									end;
-							end;
-						end;
+						fin := True;
+						choix := bouge.choix + 1;
+					end;
 	end;
 end;
 						
@@ -129,10 +107,10 @@ begin
 end;
 
 procedure menu(var fin : Boolean;var ch1,ch2 : Integer);
-var window, fond,fond2 ,curseur: PSDL_Surface;
+var window, fond,fond2: PSDL_Surface;
 	event,event2 : TSDL_Event;
 	sound : pMIX_MUSIC;
-	button: coord;
+	button: coordMenu;
 begin
 	initialise(window, fond, fond2);
 	fin := False ;
@@ -140,14 +118,14 @@ begin
 	affiche ( window,fond );
 	button.x:=150;
 	button.y:=170;
-	affichecurseur( window,curseur,button);
+	affichecurseur( window,button);
 	button.choix:=0;
 	while not fin do
 	begin
-		SDL_DELAY(100);
+		SDL_DELAY(70);
 		SDL_PollEvent (@event);
 		if event.type_ = SDL_KEYDOWN then
-			processKey ( event.key , button,window,curseur,fond,fin,ch1);
+			processKey ( event.key , button,window,fond,fin,ch1);
 	end;
 	if ch1 = 1 then
 	begin
@@ -155,31 +133,90 @@ begin
 		button.x:=150;
 		button.y:=170;
 		affiche ( window,fond2 );
-		affichecurseur( window,curseur,button);
+		affichecurseur( window,button);
 		while not fin do
 			begin
 				fin := False;
-				SDL_DELAY(100);
+				SDL_DELAY(70);
 				SDL_PollEvent(@event2);
 					if event2.type_ = SDL_KEYDOWN then
-				processKey ( event2.key , button,window,curseur,fond2,fin,ch2);
+				processKey ( event2.key , button,window,fond2,fin,ch2);
 			end;
 	end
 	else if ch1 = 3 then
 		HALT;
 	termine_musique(sound);
 	termine(window, fond, fond2);
-
 end;
 
-procedure choixFin(var window : PSDL_Surface; var fin, save : Boolean);
+procedure affichageFondFin(var window : PSDL_Surface; T:Terrain);
+var coordfond : TSDL_Rect;
+	i : Integer;
+	fond, terre, bordure, pierre, diamant, port, spider : PSDL_Surface;
+begin
+	fond := IMG_Load('ressources/fond.png');
+	terre := IMG_Load('ressources/terre.png');
+	bordure := IMG_Load('ressources/bordure.png');
+	pierre := IMG_Load('ressources/pierre.png');
+	diamant := IMG_Load('ressources/Diamond1.png');
+	port := IMG_Load('ressources/Port1.png');
+	spider := IMG_Load('ressources/Spider2.png');
+	coordfond.x := 5*32;
+	for i:= 0 to 2 do
+	begin
+		coordfond.y := 50+5*32+128*i;
+		writeln((coordfond.y-50) div 32+1);
+		case T[(coordfond.y-50) div 32+1][coordfond.x div 32+1].genre of
+				1 : SDL_BlitSurface(terre, NIL, window,@coordfond);
+				2 :	SDL_BlitSurface(bordure, NIL, window,@coordfond);				
+				3 : SDL_BlitSurface(pierre, NIL, window,@coordfond);
+				4 : SDL_BlitSurface(diamant, NIL, window,@coordfond);
+				5 : SDL_BlitSurface(port, NIL, window,@coordfond);
+				6 : SDL_BlitSurface(spider, NIL, window,@coordfond);			
+				0 : SDL_BlitSurface(fond, NIL, window,@coordfond);	
+			end;
+	end;
+	SDl_Flip(window);
+	SDL_FreeSurface(fond);
+	SDL_FreeSurface(terre);
+	SDL_FreeSurface(bordure);
+	SDL_FreeSurface(diamant);	
+	SDL_FreeSurface(port);	
+	SDL_FreeSurface(pierre);
+	SDL_FreeSurface(spider);
+end;
+
+procedure ProcessKeyFin(key : TSDL_KeyboardEvent;var bouge : coordMenu;var window : PSDL_Surface; var fin : Boolean; T:Terrain);
+begin
+	case key.keysym.sym of
+		SDLK_DOWN : begin 
+						bouge.choix:= (bouge.choix+1) mod 3;
+						bouge.y:=50+5*32+128*bouge.choix;
+						affichageFondFin(window, T);
+						affichecurseur(window,bouge);
+					end;
+		SDLK_UP : begin 
+						bouge.choix:=(bouge.choix-1+3) mod 3;
+						bouge.y:=50+5*32+128*bouge.choix;
+						affichageFondFin(window, T);
+						affichecurseur(window,bouge);
+					end;
+		SDLK_RETURN :fin:=True;
+	end;
+end;
+
+
+procedure choixFin(var window : PSDL_Surface; var fin, save : Boolean; T : Terrain);
 var Resume, SaveQuit, Quit : PSDL_Surface;
 	destination_rect : TSDL_Rect;
+	choisi : Boolean;
+	event : TSDL_Event;
+	pos : coordMenu;
 begin
 	Resume := IMG_Load('ressources/Resume.png');
 	SaveQuit := IMG_Load('ressources/SaveQuit.png');
 	Quit := IMG_Load('ressources/Quit.png');
-	
+	choisi := False;
 	destination_rect.x := 200;
 	destination_rect.y := 100;
 	SDL_BlitSurface ( Resume , NIL , window , @destination_rect );
@@ -190,9 +227,28 @@ begin
 	destination_rect.y := destination_rect.y + 150;
 	SDL_BlitSurface ( Quit , NIL , window , @destination_rect );
 	
-	SDL_Delay(1000);
+	pos.x:=5*32;
+	pos.y:=50+ 5*32;
+	affichecurseur( window,pos);
+	pos.choix:=0;
 	
-
+	SDl_Flip(window);
+	while not choisi do
+	begin
+		SDL_PollEvent (@event);
+		if event.type_ = SDL_KEYDOWN then
+			processKeyFin ( event.key , pos, window, choisi, T);
+		SDL_Delay(100);
+	end;
+	
+	case pos.choix of
+		1 : save := True;
+		2 : fin := True;
+	end;
+	
+	SDL_FreeSurface( Resume );
+	SDL_FreeSurface( SaveQuit );
+	SDL_FreeSurface( Quit );
 end;
 
 end.
