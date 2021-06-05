@@ -121,7 +121,8 @@ begin
 										choix := 2;
 									end;
 								3 : begin
-										HALT;
+										fin:=True;
+										choix := 3;
 									end;
 							end;
 						end;
@@ -187,7 +188,9 @@ begin
 					if event2.type_ = SDL_KEYDOWN then
 				processKey ( event2.key , button,window,curseur,fond2,fin,ch2);
 			end;
-	end;
+	end
+	else if ch1 = 3 then
+		HALT;
 termine_musique(sound);
 termine(window, fond);
 

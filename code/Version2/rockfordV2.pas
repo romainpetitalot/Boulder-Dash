@@ -625,7 +625,7 @@ begin
 	randomize();
 	position.x := 4;
 	position.y := 3;
-	niv := 1; //random(10) + 1;
+	niv := random(10) + 1;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
 	
@@ -636,7 +636,7 @@ begin
 				chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T)
 			else if ch2 = 2 then
 				chargement('ressources/Niveaux v1/v2-' + IntToStr(niv),T)
-			else if ch2 = 2 then
+			else if ch2 = 3 then
 				chargement('ressources/Niveaux v1/v3-' + IntToStr(niv),T);
 		end
 	else
