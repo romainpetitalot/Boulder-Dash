@@ -15,6 +15,8 @@ end;
 
 procedure menu(var fin : Boolean;var choix : Integer);
 
+procedure choixFin(var fin, save : Boolean);
+
 implementation
 
 procedure initialise( var window, menu : PSDL_Surface);
@@ -87,34 +89,38 @@ procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coord; var window,
 begin
 	case key.keysym.sym of
 		SDLK_DOWN : begin bouge.x:=bouge.x;
-							bouge.y:=bouge.y+MVT;
-							bouge.choix:=bouge.choix+1;
+							bouge.choix:= (bouge.choix+1) mod 3;
+							writeln(bouge.choix);
+							bouge.y:=170+MVT*bouge.choix;
+							
 							affiche(window,menu);
 							affichecurseur(window,curseur,bouge);
 								
 					end;
 		SDLK_UP : begin 
 						bouge.x:=bouge.x;
-							bouge.y:=bouge.y-MVT;
-							bouge.choix:=bouge.choix-1;
+							bouge.choix:=(bouge.choix-1+3) mod 3; //Pour qu'on puisse retourner sur l'option du haut avec la flèche du bas quand on est en bas
+							writeln(bouge.choix);
+							bouge.y:=170+MVT*bouge.choix;
+							
 							affiche(window,menu);
 							affichecurseur(window,curseur,bouge);
 							
 					end;
 		SDLK_RETURN : begin
 							case bouge.choix of
-								1 : begin
+								0 : begin
 										fin:=True;
 										choix := 1;
 									end;
-								2 : begin
+								1 : begin
 										fin:=True;
 {
 										affichepara(window,reg,bouge);
 }
 										choix := 2;
 									end;
-								3 : begin
+								2 : begin
 										HALT;
 									end;
 							end;
@@ -150,14 +156,12 @@ begin
 	initialise(window, fond);
 	fin := False ;
 	son(sound);
-	{ On se limite a 100 fps . }
-		SDL_Delay (100);
 		{ On affiche la scene }
 		affiche ( window,fond );
 		button.x:=150;
 		button.y:=170;
 		affichecurseur( window,curseur,button);
-		button.choix:=1;
+		button.choix:=0;
 	while not fin do
 	begin
 		SDL_DELAY(100);
@@ -168,6 +172,17 @@ begin
 	end;
 termine_musique(sound);
 termine(window, fond);
+
+end;
+
+procedure choixFin(var fin, save : Boolean);
+var Resume, SaveQuit, Quit : PSDL_Surface;
+begin
+	Resume := IMG_Load('ressources/Resume.png');
+	SaveQuit := IMG_Load('ressources/SaveQuit.png');
+	Quit := IMG_Load('ressources/Quit.png');
+
+
 
 end;
 

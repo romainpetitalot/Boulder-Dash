@@ -537,7 +537,6 @@ begin
 			moveSpiderAntiClockwise(window, rockford, T, position);
 	end;
 	
-	
 	ecrire(window, IntToStr(OldChrono), 100, 5, 35, 0, 0, 0);
 	if Chrono < 10 then
 		ecrire(window, IntToStr(Chrono), 100, 5, 35, 255, 0, 0)
@@ -549,6 +548,7 @@ begin
 		ecrire(window, IntToStr(nbDiamant), 200, 5, 35, 255, 228, 54)
 	else
 		ecrire(window, IntToStr(nbDiamant), 200, 5, 35, 255, 255, 255);
+		
 	SDL_Flip(window);
 	SDL_Delay(20);
 end;
