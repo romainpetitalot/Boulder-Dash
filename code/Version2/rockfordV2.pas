@@ -615,12 +615,12 @@ end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
-	niv, nbDiamant, Temps, TempsInit, reserveTemps, OldTemps,choix : Integer;
+	niv, nbDiamant, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2 : Integer;
 	position : coordonnees;
 	T : Terrain;
 	fin,u, d, r, l,save : Boolean;
 begin
-	menu(fin,choix);
+	menu(fin,ch1,ch2);
 	initialise(window, rockford);
 	randomize();
 	position.x := 4;
@@ -630,10 +630,17 @@ begin
 	coord.y := 32*(position.y-1) + 50;
 	
 	fin := False;
-	if choix = 1 then
-		chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T)
+	if ch1 = 1 then
+		begin
+			if ch2 = 1 then
+				chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T)
+			else if ch2 = 2 then
+				chargement('ressources/Niveaux v1/v2-' + IntToStr(niv),T)
+			else if ch2 = 2 then
+				chargement('ressources/Niveaux v1/v3-' + IntToStr(niv),T);
+		end
 	else
-	chargement('ressources/Niveaux v1/save',T); // pouvoir y jouer grâce au menu
+		chargement('ressources/Niveaux v1/save',T); // pouvoir y jouer grâce au menu
 	afficherfond(window, rockford, T, position, True);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);

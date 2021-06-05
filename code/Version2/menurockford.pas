@@ -13,7 +13,7 @@ Type coord = record
 	choix: Integer;
 end;
 
-procedure menu(var fin : Boolean;var choix : Integer);
+procedure menu(var fin : Boolean;var ch1,ch2 : Integer);
 
 implementation
 
@@ -66,10 +66,11 @@ begin
 	SDL_Flip ( window );
 end;
 
-procedure affichepara(var window,reg : PSDL_SURFACE; position : coord);
+procedure affichedifficulte(var window : PSDL_SURFACE);
 var destination_rect : TSDL_RECT ;
+	reg : PSDL_Surface;
 begin
-	reg:= IMG_Load('ressources/encours.png');
+	reg:= IMG_Load('ressources/fond2.png');
 	{ Choix de la position et taille de l ’ element a afficher }
 	destination_rect.x := 0  ;
 	destination_rect.y := 0  ;
@@ -82,23 +83,30 @@ begin
 end;
 
 
-procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coord; var window,curseur,menu,reg : PSDL_Surface; var fin : Boolean; var choix : Integer );
+procedure processKey ( key : TSDL_KeyboardEvent ; var bouge : coord; var window,curseur,menu : PSDL_Surface; var fin : Boolean; var choix : Integer );
 
 begin
 	case key.keysym.sym of
-		SDLK_DOWN : begin bouge.x:=bouge.x;
-							bouge.y:=bouge.y+MVT;
-							bouge.choix:=bouge.choix+1;
-							affiche(window,menu);
-							affichecurseur(window,curseur,bouge);
+		SDLK_DOWN : begin 
+							if bouge.choix <> 3 then
+							begin
+								bouge.x:=bouge.x;
+								bouge.y:=bouge.y+MVT;
+								bouge.choix:=bouge.choix+1;
+								affiche(window,menu);
+								affichecurseur(window,curseur,bouge);
+							end;
 								
 					end;
 		SDLK_UP : begin 
-						bouge.x:=bouge.x;
-							bouge.y:=bouge.y-MVT;
-							bouge.choix:=bouge.choix-1;
-							affiche(window,menu);
-							affichecurseur(window,curseur,bouge);
+							if bouge.choix <> 1 then
+							begin
+								bouge.x:=bouge.x;
+								bouge.y:=bouge.y-MVT;
+								bouge.choix:=bouge.choix-1;
+								affiche(window,menu);
+								affichecurseur(window,curseur,bouge);
+							end;
 							
 					end;
 		SDLK_RETURN : begin
@@ -106,12 +114,10 @@ begin
 								1 : begin
 										fin:=True;
 										choix := 1;
+										affichedifficulte(window);
 									end;
 								2 : begin
 										fin:=True;
-{
-										affichepara(window,reg,bouge);
-}
 										choix := 2;
 									end;
 								3 : begin
@@ -139,15 +145,16 @@ begin
 	Mix_CloseAudio ();
 end;
 
-procedure menu(var fin : Boolean;var choix : Integer);
+procedure menu(var fin : Boolean;var ch1,ch2 : Integer);
 
-var window, fond ,curseur,parametres: PSDL_Surface;
-	event : TSDL_Event;
+var window, fond,fond2 ,curseur: PSDL_Surface;
+	event,event2 : TSDL_Event;
 	sound : pMIX_MUSIC;
 	button: coord;
 
 begin
 	initialise(window, fond);
+	fond2 := IMG_Load('ressources/fond2.png');
 	fin := False ;
 	son(sound);
 	{ On se limite a 100 fps . }
@@ -164,7 +171,22 @@ begin
 		{ On lit un evenement et on agit en consequence }
 		SDL_PollEvent (@event);
 		if event.type_ = SDL_KEYDOWN then
-			processKey ( event.key , button,window,curseur,fond,parametres,fin,choix);
+			processKey ( event.key , button,window,curseur,fond,fin,ch1);
+	end;
+	if ch1 = 1 then
+	begin
+		fin := False;
+		button.x:=150;
+		button.y:=170;
+		affichecurseur( window,curseur,button);
+		while not fin do
+			begin
+				fin := False;
+				SDL_DELAY(100);
+				SDL_PollEvent(@event2);
+					if event2.type_ = SDL_KEYDOWN then
+				processKey ( event2.key , button,window,curseur,fond2,fin,ch2);
+			end;
 	end;
 termine_musique(sound);
 termine(window, fond);
