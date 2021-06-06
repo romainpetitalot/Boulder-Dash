@@ -276,7 +276,7 @@ end;
 
 
 procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees; nomObjet:string; var nbDiamant : Integer; var fin : Boolean );
-var i, j, numeroObj : Integer;
+var i, j, numeroObj, coordY : Integer;
 begin
 	if nomObjet = 'Pierre' then
 		numeroObj := 3
@@ -321,12 +321,41 @@ begin
 					mortPapillon(T, j,i+2, nbDiamant, position);
 				end;
 			end;					
+			
+			if T[i][j].genre = numeroObj then //Les éboulements sur le côté
+			begin
+				if (T[i+1][j].genre = 3) or (T[i+1][j].genre = 4) then
+				begin
+					coordY := i+1;
+					while (T[coordY][j].genre = 3)or(T[coordY][j].genre = 4) do //Pour verif que la pierre en dessous est pas en train de tomber
+					begin
+						coordY := coordY +1;					
+					end;
+					if T[coordY][j].genre <> 0 then
+					begin
+						if (T[i+1][j+1].genre=0)and(T[i][j+1].genre=0)and not((position.y=i+1)and(position.x=j+1))and not((position.y=i)and(position.x=j+1))and(T[i][j+1].mouvement='')then
+						begin
+							T[i+1][j+1].genre := numeroObj;
+							T[i][j].genre := 0;
+							SDl_delay(15);
+						end
+						else if(T[i+1][j-1].genre=0)and(T[i][j-1].genre=0)and not((position.y=i+1)and(position.x=j-1))and not((position.y=i)and(position.x=j-1))and(T[i][j-1].mouvement='')then
+						begin
+							T[i+1][j-1].genre := numeroObj;
+							T[i][j].genre := 0;
+							SDl_delay(15);
+						end;
+					end;
+				end;
+			end;
 		end;
 	end;
+	afficherfond(window, rockford, T, position, True);
+	SDL_Flip(window);
 end;
 
 
-procedure moveSpiderAntiClockwise(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees;var fin:Boolean );
+procedure movePapillonAntiClockwise(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees;var fin:Boolean );
 var i, j : Integer;
 begin
 	for i := 1 to largueur do
@@ -343,7 +372,6 @@ begin
 		begin			
 			if (T[i][j].genre = 6) and not(T[i][j].Used) then
 			begin
-				writeln(T[i][j].orientation);
 				case T[i][j].orientation of
 					'haut' :
 					begin
@@ -578,7 +606,7 @@ begin
 		tombePierre(window, rockford, T, position, 'Pierre', nbDiamant, fin);
 		tombePierre(window, rockford, T, position, 'Diamant', nbDiamant, fin);
 		if (counter mod 4)<1 then	
-			moveSpiderAntiClockwise(window, rockford, T, position, fin);
+			movePapillonAntiClockwise(window, rockford, T, position, fin);
 	end;
 	
 	Rrgb := 0; Vrgb := 0; Brgb :=0;
