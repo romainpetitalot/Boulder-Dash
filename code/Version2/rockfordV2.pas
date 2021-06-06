@@ -347,7 +347,7 @@ begin
 				case T[i][j].orientation of
 					'haut' :
 					begin
-						if T[i][j+1].genre = 0 then
+						if (T[i][j+1].genre = 0) and (T[i+1][j+1].genre <> 0) then
 						begin
 							T[i][j].genre := 0;
 							T[i][j+1].genre := 6;
@@ -609,6 +609,31 @@ begin
 	SDL_Delay(20);
 end;
 
+
+procedure initPapillon(var T : Terrain);
+var i, j:Integer;
+begin
+	for i := 1 to 24 do
+	begin
+		for j := 1 to 20 do
+		begin
+			if T[i][j].genre = 6 then
+			begin
+				if T[i][j-1].genre <> 0 then
+					T[i][j].orientation := 'bas'
+				else if T[i-1][j].genre <> 0 then
+					T[i][j].orientation := 'gauche'
+				else if T[i+1][j].genre <> 0 then
+					T[i][j].orientation := 'droite'
+				else
+					T[i][j].orientation := 'haut'
+		
+		
+			end;
+		end;
+	end;
+end;
+
 procedure chargement (name : string; var T : Terrain;var posRF, posFin : coordonnees;var nbDiamant, nbDiamantFin, reserveTemps : Integer);
 var fic	: Text;
 	i, j : Integer;
@@ -639,7 +664,7 @@ begin
 				'6':
 				begin
 					T[i][j].genre := 6;
-					T[i][j].orientation := 'bas';
+					T[i][j].orientation := 'haut';
 				end;
 			end;
 			
@@ -648,6 +673,8 @@ begin
 			i:=i+1;	
 	end;
 	close(fic);
+	T[posRF.y][posRF.x].genre := 0;
+	initPapillon(T);
 end;
 
 procedure SauvegarderNiveau(T : Terrain; posRF, posFin : coordonnees; nbDiamant, nbDiamantFin, reserveTemps : Integer);
@@ -692,10 +719,7 @@ begin
 	initialise(window, rockford);
 	randomize();
 	counter := 0;
-{
-	position.x := 4;
-	position.y := 3;
-}
+
 	niv := 1; //random(10) + 
 	
 	
