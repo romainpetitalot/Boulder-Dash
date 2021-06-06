@@ -2,10 +2,6 @@ program Rockfrd;
 
 uses SDL, sdl_image, sdl_ttf, sysutils,menurockford, rockfordUtils;
 
-CONST longueur = 24;
-		largueur = 20;
-
-
 procedure initialise( var window, rockford : PSDL_Surface);
 begin
 	SDL_Init(SDL_INIT_VIDEO + SDL_INIT_AUDIO);
@@ -516,7 +512,8 @@ begin
 end;
 
 
-procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position : coordonnees; var coord : TSDL_Rect;var fin, u, d, r, l, save : Boolean;var nbDiamant, Chrono, OldChrono, reserveTemps:Integer;counter:Longint);
+procedure deplacementRF(var window, rockford : Psdl_Surface; var T:Terrain; var position,positionFin: coordonnees; var coord : TSDL_Rect;
+						var fin, u, d, r, l, save : Boolean;var nbDiamant,nbDiamantFin,Chrono,OldChrono, reserveTemps:Integer;counter:Longint);
 var event : TSDL_event;
 	portActive, Bouger : Boolean;
 	oldNbDiamant, Rrgb, Vrgb, Brgb, i : Integer;
@@ -527,9 +524,9 @@ begin
 	Bouger := False;
 	oldNbDiamant := nbDiamant;
 	
-	if nbDiamant > 1 then
+	if nbDiamant > nbDiamantFin then
 	begin
-		T[19][19].genre := 5;
+		T[positionFin.y][positionFin.x].genre := 5;
 		portActive := True
 	end;
 	
@@ -598,7 +595,7 @@ begin
 	
 	Rrgb := 0; Vrgb := 0; Brgb :=0;
 	ecrire(window, IntToStr(oldNbDiamant), 200, 5, 35, Rrgb, Vrgb, Brgb);
-	if nbDiamant > 1 then
+	if nbDiamant > nbDiamantFin then
 	begin
 		Rrgb := 255; Vrgb := 228; Brgb :=54
 	end
@@ -612,7 +609,7 @@ begin
 	SDL_Delay(20);
 end;
 
-procedure chargement (name : string; var T : Terrain);
+procedure chargement (name : string; var T : Terrain;var posRF, posFin : coordonnees;var nbDiamant, nbDiamantFin, reserveTemps : Integer);
 var fic	: Text;
 	i, j : Integer;
 	str: String;
@@ -620,6 +617,13 @@ begin
 	assign(fic,name + '.txt');
 	reset(fic);
 	i:=1;
+	read(fic, posRF.x);
+	readln(fic, posRF.y);
+	read(fic, posFin.x);
+	readln(fic, posFin.y);
+	read(fic, nbDiamant);
+	readln(fic, nbDiamantFin);
+	readln(fic, reserveTemps);
 	while (not eof(fic)) do
 	begin
 		readln(fic,str);
@@ -646,13 +650,17 @@ begin
 	close(fic);
 end;
 
-procedure SauvegarderNiveau(var T : Terrain);
+procedure SauvegarderNiveau(T : Terrain; posRF, posFin : coordonnees; nbDiamant, nbDiamantFin, reserveTemps : Integer);
 var fic	: Text;
 	i, j : Integer;
 begin
 	assign(fic,'ressources/Niveaux v1/save.txt');
 	reset(fic);
 	rewrite(fic);
+	write(fic,IntToStr(posRF.x)+' ');writeln(fic,posRF.y);
+	write(fic,IntToStr(posFin.x)+' ');writeln(fic,posFin.y);
+	write(fic,IntToStr(nbDiamant)+' ');writeln(fic,nbDiamantFin);
+	writeln(fic,reserveTemps);
 	j:=1;
 	for i := 1 to 24 do
 	begin
@@ -674,8 +682,8 @@ end;
 
 var window, rockford : PSDL_Surface;
 	coord : TSDL_Rect;
-	niv, nbDiamant, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2 : Integer;
-	position : coordonnees;
+	niv, nbDiamant,nbDiamantFin, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2 : Integer;
+	position,positionFin : coordonnees;
 	T : Terrain;
 	fin,u, d, r, l,save : Boolean;
 	counter : LongInt;
@@ -684,24 +692,28 @@ begin
 	initialise(window, rockford);
 	randomize();
 	counter := 0;
+{
 	position.x := 4;
 	position.y := 3;
+}
 	niv := 1; //random(10) + 
-	coord.x := 32*(position.x-1);
-	coord.y := 32*(position.y-1) + 50;
+	
 	
 	fin := False;
 	if ch1 = 1 then
 		begin
 			if ch2 = 1 then
-				chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T)
+				chargement('ressources/Niveaux v1/v1-' + IntToStr(niv),T, position, positionFin, nbDiamant, nbDiamantFin, reserveTemps)
 			else if ch2 = 2 then
-				chargement('ressources/Niveaux v1/v2-' + IntToStr(niv),T)
+				chargement('ressources/Niveaux v1/v2-' + IntToStr(niv),T, position, positionFin, nbDiamant, nbDiamantFin, reserveTemps)
 			else if ch2 = 3 then
-				chargement('ressources/Niveaux v1/v3-' + IntToStr(niv),T);
+				chargement('ressources/Niveaux v1/v3-' + IntToStr(niv),T, position, positionFin, nbDiamant, nbDiamantFin, reserveTemps);
 		end
 	else
-		chargement('ressources/Niveaux v1/save',T); // pouvoir y jouer grâce au menu
+		chargement('ressources/Niveaux v1/save',T, position, positionFin, nbDiamant, nbDiamantFin, reserveTemps); // pouvoir y jouer grâce au menu
+	
+	coord.x := 32*(position.x-1);
+	coord.y := 32*(position.y-1) + 50;
 	afficherfond(window, rockford, T, position, True);
 	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);
@@ -709,20 +721,18 @@ begin
 	
 	u := False;	d := False;
 	r := False;	l := False;
-	nbDiamant := 0;
 	
-	reserveTemps := 60;
 	TempsInit := SDL_GetTicks() div 1000;
 	repeat
 		Temps := reserveTemps - (SDL_GetTicks()div 1000 - TempsInit) ;
 		if Temps < 0 then
 			fin := True;
-		deplacementRF(window, rockford, T, position, coord, fin, u, d, r, l,save, nbDiamant, Temps, OldTemps, reserveTemps, counter);
+		deplacementRF(window, rockford, T, position,positionFin, coord, fin, u, d, r, l,save, nbDiamant,nbDiamantFin, Temps, OldTemps, reserveTemps, counter);
 		OldTemps := Temps;	
 		counter := counter + 1;
 	until fin or save;
 	if save then
-		SauvegarderNiveau(T);
+		SauvegarderNiveau(T, position, positionFin, nbDiamant, nbDiamantFin, Temps);
 	SDL_FreeSurface(window);
 	SDL_Quit();
 end.
