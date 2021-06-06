@@ -335,15 +335,22 @@ begin
 					begin
 						if (T[i+1][j+1].genre=0)and(T[i][j+1].genre=0)and not((position.y=i+1)and(position.x=j+1))and not((position.y=i)and(position.x=j+1))and(T[i][j+1].mouvement='')then
 						begin
-							T[i+1][j+1].genre := numeroObj;
+							T[i][j+1].genre := numeroObj;
 							T[i][j].genre := 0;
-							SDl_delay(15);
+							afficherfond(window, rockford, T, position, True);
+							SDl_delay(50);
+							T[i][j+1].genre := 0;
+							T[i+1][j+1].genre := numeroObj;
 						end
 						else if(T[i+1][j-1].genre=0)and(T[i][j-1].genre=0)and not((position.y=i+1)and(position.x=j-1))and not((position.y=i)and(position.x=j-1))and(T[i][j-1].mouvement='')then
 						begin
-							T[i+1][j-1].genre := numeroObj;
+							T[i][j-1].genre := numeroObj;
 							T[i][j].genre := 0;
-							SDl_delay(15);
+							afficherfond(window, rockford, T, position, True);
+							SDl_delay(50);
+							T[i][j-1].genre := 0;
+							T[i+1][j-1].genre := numeroObj;
+							
 						end;
 					end;
 				end;
@@ -351,7 +358,6 @@ begin
 		end;
 	end;
 	afficherfond(window, rockford, T, position, True);
-	SDL_Flip(window);
 end;
 
 
@@ -568,7 +574,7 @@ begin
 					if not(save) and not(fin) then
 					begin
 						afficherfond(window, rockford, T, position, True);
-						for i:=3 downto 1 do
+						for i:=3 downto 1 do //Décompte avant de rejouer
 						begin
 							ecrire(window, IntToStr(i), 375, 0, 45, 146, 146, 255);
 							SDl_Flip(window);
@@ -655,8 +661,6 @@ begin
 					T[i][j].orientation := 'droite'
 				else
 					T[i][j].orientation := 'haut'
-		
-		
 			end;
 		end;
 	end;
@@ -670,7 +674,7 @@ begin
 	assign(fic,name + '.txt');
 	reset(fic);
 	i:=1;
-	read(fic, posRF.x);
+	read(fic, posRF.x);//On commence par lire les données du niveau
 	readln(fic, posRF.y);
 	read(fic, posFin.x);
 	readln(fic, posFin.y);
@@ -682,27 +686,14 @@ begin
 		readln(fic,str);
 		for j := 1 to 24 do
 		begin
-			case str[j] of
-				'0':T[i][j].genre := 0;
-				'1':T[i][j].genre := 1;
-				'2':T[i][j].genre := 2;
-				'3':T[i][j].genre := 3;
-				'4':T[i][j].genre := 4;
-				'5':T[i][j].genre := 5;
-				'6':
-				begin
-					T[i][j].genre := 6;
-					T[i][j].orientation := 'haut';
-				end;
-			end;
-			
+			T[i][j].genre := StrToInt(str[j]);//On lit la map
 			T[i][j].mouvement := '';
 		end;
-			i:=i+1;	
+		i:=i+1;	
 	end;
 	close(fic);
-	T[posRF.y][posRF.x].genre := 0;
-	initPapillon(T);
+	T[posRF.y][posRF.x].genre := 0;//Notre personnage part sur une case vide
+	initPapillon(T);//Calcul de la direction dans laquelle les papillons vont devoir partir
 end;
 
 procedure SauvegarderNiveau(T : Terrain; posRF, posFin : coordonnees; nbDiamant, nbDiamantFin, reserveTemps : Integer);
@@ -716,21 +707,11 @@ begin
 	write(fic,IntToStr(posFin.x)+' ');writeln(fic,posFin.y);
 	write(fic,IntToStr(nbDiamant)+' ');writeln(fic,nbDiamantFin);
 	writeln(fic,reserveTemps);
-	j:=1;
 	for i := 1 to 24 do
 	begin
 		 for j:= 1 to 24 do
-			case T[i][j].genre of
-				0:write(fic,'0');
-				1:write(fic,'1');
-				2:write(fic,'2');
-				3:write(fic,'3');
-				4:write(fic,'4');
-				5:write(fic,'5');
-				6:write(fic,'6');
-			end;
-			
-			writeln(fic,'');
+			write(fic,IntToStr(T[i][j].genre));
+		writeln(fic,'');
 	end;
 	close(fic);
 end;
