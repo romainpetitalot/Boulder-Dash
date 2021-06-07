@@ -551,12 +551,7 @@ begin
 	portActive := False;
 	Bouger := False;
 	oldNbDiamant := nbDiamant;
-	
-<<<<<<< HEAD
-	if nbDiamant > 3 then
-=======
 	if nbDiamant > nbDiamantFin then
->>>>>>> 09776a98afaece31fb351094c5ce8b8f98e6f5a3
 	begin
 		T[positionFin.y][positionFin.x].genre := 5;
 		portActive := True
@@ -728,19 +723,11 @@ begin
 	menu(fin,ch1,ch2);
 	initialise(window, rockford);
 	randomize();
-<<<<<<< HEAD
 	position.x := 4;
 	position.y := 3;
 	niv := random(5) + 1;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
-=======
-	counter := 0;
-
-	niv := 1; //random(10) + 
-	
->>>>>>> 09776a98afaece31fb351094c5ce8b8f98e6f5a3
-	
 	fin := False;
 	if ch1 = 1 then
 		begin
