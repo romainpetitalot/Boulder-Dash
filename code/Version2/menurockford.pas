@@ -164,7 +164,8 @@ begin
 	coordfond.x := 5*32;
 	for i:= 0 to 2 do
 	begin
-		coordfond.y := 50+4*32+128*i;
+		coordfond.y := 50+5*32+128*i;
+		writeln((coordfond.y-50) div 32+1);
 		case T[(coordfond.y-50) div 32+1][coordfond.x div 32+1].genre of
 				1 : SDL_BlitSurface(terre, NIL, window,@coordfond);
 				2 :	SDL_BlitSurface(bordure, NIL, window,@coordfond);				
@@ -190,13 +191,13 @@ begin
 	case key.keysym.sym of
 		SDLK_DOWN : begin 
 						bouge.choix:= (bouge.choix+1) mod 3;
-						bouge.y:=50+4*32+128*bouge.choix;
+						bouge.y:=50+5*32+128*bouge.choix;
 						affichageFondFin(window, T);
 						affichecurseur(window,bouge);
 					end;
 		SDLK_UP : begin 
 						bouge.choix:=(bouge.choix-1+3) mod 3;
-						bouge.y:=50+4*32+128*bouge.choix;
+						bouge.y:=50+5*32+128*bouge.choix;
 						affichageFondFin(window, T);
 						affichecurseur(window,bouge);
 					end;
@@ -227,7 +228,7 @@ begin
 	SDL_BlitSurface ( Quit , NIL , window , @destination_rect );
 	
 	pos.x:=5*32;
-	pos.y:=50+ 4*32;
+	pos.y:=50+ 5*32;
 	affichecurseur( window,pos);
 	pos.choix:=0;
 	
