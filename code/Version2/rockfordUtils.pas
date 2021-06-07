@@ -7,6 +7,7 @@ CONST longueur = 24;
 	AUDIO_CHUNKSIZE :INTEGER=4096;
 	MVT = 180;
 
+
 Type coordMenu = record
 	x,y: Integer ;
 	choix: Integer;
