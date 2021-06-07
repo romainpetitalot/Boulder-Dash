@@ -41,7 +41,7 @@ begin
 end;
 
 
-procedure afficherfond(var window, rockford : PSDL_Surface; T : Terrain; position : coordonnees; enDeplacement : Boolean);
+procedure afficherfond(var window, rockford : PSDL_Surface; T : Terrain; position : coordonnees; notMoving : Boolean);
 var fond, terre, bordure, pierre, diamant, port, spider : PSDL_Surface;
 	coordfond : TSDL_Rect;
 	i, j : Integer;
@@ -108,7 +108,7 @@ begin
 		coordfond.y := coordfond.y + 32
 	end;
 	
-	if enDeplacement then
+	if notMoving then
 	begin
 		coordfond.x := 32*(position.x-1);
 		coordfond.y := 32*(position.y-1) + 50;
@@ -333,25 +333,20 @@ begin
 					end;
 					if T[coordY][j].genre <> 0 then
 					begin
-						if (T[i+1][j+1].genre=0)and(T[i][j+1].genre=0)and not((position.y=i+1)and(position.x=j+1))and not((position.y=i)and(position.x=j+1))and(T[i][j+1].mouvement='')then
-						begin
-							T[i][j+1].genre := numeroObj;
-							T[i][j].genre := 0;
-							afficherfond(window, rockford, T, position, True);
-							SDl_delay(50);
-							T[i][j+1].genre := 0;
-							T[i+1][j+1].genre := numeroObj;
-						end
-						else if(T[i+1][j-1].genre=0)and(T[i][j-1].genre=0)and not((position.y=i+1)and(position.x=j-1))and not((position.y=i)and(position.x=j-1))and(T[i][j-1].mouvement='')then
+						if(T[i+1][j-1].genre=0)and(T[i][j-1].genre=0)and not((position.y=i+1)and(position.x=j-1))and not((position.y=i)and(position.x=j-1))and(T[i-1][j-1].mouvement='')and(T[i][j-1].mouvement='')then
 						begin
 							T[i][j-1].genre := numeroObj;
 							T[i][j].genre := 0;
 							afficherfond(window, rockford, T, position, True);
-							SDl_delay(50);
-							T[i][j-1].genre := 0;
-							T[i+1][j-1].genre := numeroObj;
-							
-						end;
+							SDl_delay(20);
+						end
+						else if (T[i+1][j+1].genre=0)and(T[i][j+1].genre=0)and not((position.y=i+1)and(position.x=j+1))and not((position.y=i)and(position.x=j+1))and(T[i-1][j+1].mouvement='')and(T[i][j+1].mouvement='')then
+						begin
+							T[i][j+1].genre := numeroObj;
+							T[i][j].genre := 0;
+							afficherfond(window, rockford, T, position, True);
+							SDl_delay(20);
+						end; 
 					end;
 				end;
 			end;
@@ -452,8 +447,7 @@ begin
 							T[i][j].orientation := 'haut'
 					end;
 				end;	
-				afficherfond(window, rockford, T, position, True);
-				SDL_Flip(window);	
+				afficherfond(window, rockford, T, position, True);	
 				if (position.x = j) and (position.y = i) then
 					fin := True
 			end;
@@ -611,12 +605,12 @@ begin
 	begin
 		tombePierre(window, rockford, T, position, 'Pierre', nbDiamant, fin);
 		tombePierre(window, rockford, T, position, 'Diamant', nbDiamant, fin);
-		if (counter mod 4)<1 then	
+		if (counter mod 2)<1 then	
 			movePapillonAntiClockwise(window, rockford, T, position, fin);
 	end;
 	
 	Rrgb := 0; Vrgb := 0; Brgb :=0;
-	ecrire(window, IntToStr(OldChrono), 100, 5, 35, Rrgb, Vrgb, Brgb);
+	ecrire(window, IntToStr(OldChrono), 600, 5, 35, Rrgb, Vrgb, Brgb);
 	if Chrono < 10 then
 	begin
 		Rrgb := 255; Vrgb := 0; Brgb :=0
@@ -625,10 +619,10 @@ begin
 	begin
 		Rrgb := 255; Vrgb := 255; Brgb :=255;
 	end;
-	ecrire(window, IntToStr(Chrono), 100, 5, 35, Rrgb, Vrgb, Brgb);
+	ecrire(window, IntToStr(Chrono), 600, 5, 35, Rrgb, Vrgb, Brgb);
 	
 	Rrgb := 0; Vrgb := 0; Brgb :=0;
-	ecrire(window, IntToStr(oldNbDiamant), 200, 5, 35, Rrgb, Vrgb, Brgb);
+	ecrire(window, IntToStr(oldNbDiamant), 290, 5, 35, Rrgb, Vrgb, Brgb);
 	if nbDiamant > nbDiamantFin then
 	begin
 		Rrgb := 255; Vrgb := 228; Brgb :=54
@@ -637,10 +631,10 @@ begin
 	begin
 		Rrgb := 255; Vrgb := 255; Brgb :=255;
 	end;
-	ecrire(window, IntToStr(nbDiamant), 200, 5, 35, Rrgb, Vrgb, Brgb);
+	ecrire(window, IntToStr(nbDiamant), 290, 5, 35, Rrgb, Vrgb, Brgb);
 		
 	SDL_Flip(window);
-	SDL_Delay(20);
+	SDL_Delay(15);
 end;
 
 
@@ -691,6 +685,7 @@ begin
 		end;
 		i:=i+1;	
 	end;
+	
 	close(fic);
 	T[posRF.y][posRF.x].genre := 0;//Notre personnage part sur une case vide
 	initPapillon(T);//Calcul de la direction dans laquelle les papillons vont devoir partir
@@ -716,14 +711,16 @@ begin
 	close(fic);
 end;
 
-var window, rockford : PSDL_Surface;
-	coord : TSDL_Rect;
+var window, rockford, Logo, Logo2 : PSDL_Surface;
+	coord, coordFondHaut : TSDL_Rect;
 	niv, nbDiamant,nbDiamantFin, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2 : Integer;
 	position,positionFin : coordonnees;
 	T : Terrain;
 	fin,u, d, r, l,save : Boolean;
 	counter : LongInt;
 begin
+	Logo := IMG_Load('Top1.png');
+	Logo2 := IMG_Load('Top2.png');
 	menu(fin,ch1,ch2);
 	initialise(window, rockford);
 	randomize();
@@ -745,21 +742,32 @@ begin
 	else
 		chargement('ressources/Niveaux v1/save',T, position, positionFin, nbDiamant, nbDiamantFin, reserveTemps); // pouvoir y jouer grâce au menu
 	
+	coordFondHaut.x := 96;
+	coordFondHaut.y := 5;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
+
+		
 	afficherfond(window, rockford, T, position, True);
-	SDL_BlitSurface(rockford, NIL, window,@coord);
 	SDl_Flip(window);
 	SDl_Delay(20);
 	
 	u := False;	d := False;
 	r := False;	l := False;
 	
+	ecrire(window, IntToStr(nbDiamantFin), 80, 5, 35, 255, 228, 54);
+	ecrire(window, IntToStr(ch2)+'-'+IntToStr(niv), 130, 5, 35, 255, 255, 255);
+	
 	TempsInit := SDL_GetTicks() div 1000;
 	repeat
-		Temps := reserveTemps - (SDL_GetTicks()div 1000 - TempsInit) ;
+		Temps := reserveTemps - (SDL_GetTicks()div 1000 - TempsInit) ; 
 		if Temps < 0 then
 			fin := True;
+		if counter mod 10 < 5 then
+			SDL_BlitSurface(Logo, NIL, window,@coordFondHaut)
+		else
+			SDL_BlitSurface(Logo2, NIL, window,@coordFondHaut);
+		
 		deplacementRF(window, rockford, T, position,positionFin, coord, fin, u, d, r, l,save, nbDiamant,nbDiamantFin, Temps, OldTemps, reserveTemps, counter);
 		OldTemps := Temps;	
 		counter := counter + 1;
