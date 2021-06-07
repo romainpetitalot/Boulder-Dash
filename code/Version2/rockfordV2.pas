@@ -490,7 +490,7 @@ begin
 	Bouger := False;
 	oldNbDiamant := nbDiamant;
 	
-	if nbDiamant > 1 then
+	if nbDiamant > 3 then
 	begin
 		T[19][19].genre := 5;
 		portActive := True
@@ -641,7 +641,7 @@ begin
 	randomize();
 	position.x := 4;
 	position.y := 3;
-	niv := random(10) + 1;
+	niv := random(5) + 1;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
 	
