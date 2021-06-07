@@ -719,8 +719,8 @@ var window, rockford, Logo, Logo2 : PSDL_Surface;
 	fin,u, d, r, l,save : Boolean;
 	counter : LongInt;
 begin
-	Logo := IMG_Load('Top1.png');
-	Logo2 := IMG_Load('Top2.png');
+	Logo := IMG_Load('ressources/Top1.png');
+	Logo2 := IMG_Load('ressources/Top2.png');
 	menu(fin,ch1,ch2);
 	initialise(window, rockford);
 	randomize();
@@ -767,7 +767,6 @@ begin
 			SDL_BlitSurface(Logo, NIL, window,@coordFondHaut)
 		else
 			SDL_BlitSurface(Logo2, NIL, window,@coordFondHaut);
-		
 		deplacementRF(window, rockford, T, position,positionFin, coord, fin, u, d, r, l,save, nbDiamant,nbDiamantFin, Temps, OldTemps, reserveTemps, counter);
 		OldTemps := Temps;	
 		counter := counter + 1;
