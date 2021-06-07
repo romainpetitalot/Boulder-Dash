@@ -551,7 +551,6 @@ begin
 	portActive := False;
 	Bouger := False;
 	oldNbDiamant := nbDiamant;
-	
 	if nbDiamant > nbDiamantFin then
 	begin
 		T[positionFin.y][positionFin.x].genre := 5;
@@ -724,12 +723,9 @@ begin
 	menu(fin,ch1,ch2);
 	initialise(window, rockford);
 	randomize();
-	counter := 0;
 
-	niv := 1; //random(10) + 
+	niv := random(5) + 1;
 	
-	
-	fin := False;
 	if ch1 = 1 then
 		begin
 			if ch2 = 1 then
@@ -746,8 +742,8 @@ begin
 	coordFondHaut.y := 5;
 	coord.x := 32*(position.x-1);
 	coord.y := 32*(position.y-1) + 50;
-
-		
+	fin := False;
+	counter := 0;	
 	afficherfond(window, rockford, T, position, True);
 	SDl_Flip(window);
 	SDl_Delay(20);
