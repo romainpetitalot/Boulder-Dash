@@ -2,15 +2,27 @@ program Rockfrd;
 
 uses SDL, sdl_image, sdl_ttf, sysutils,menurockford, rockfordUtils;
 
-procedure initialise( var window, rockford : PSDL_Surface);
+procedure initialiseSDL( var window, rockford, Logo, Logo2 : PSDL_Surface);
 begin
 	SDL_Init(SDL_INIT_VIDEO + SDL_INIT_AUDIO);
 	SDL_putenv('SDL_VIDEO_WINDOW_POS=center');
+	SDL_WM_SetCaption('Boulder Dash', NIL);
+	SDL_WM_SetIcon(IMG_Load('ressources/icon.bmp'), NIL);
 	window := SDL_SetVideoMode(32*longueur, 32*largueur+50, 32, SDL_DOUBLEBUF + SDL_HWSURFACE + SDL_NOFRAME);
-	
+
 	rockford := IMG_Load('ressources/face.png');
-	
+	Logo := IMG_Load('ressources/Top1.png');
+	Logo2 := IMG_Load('ressources/Top2.png');
 	SDL_ShowCursor(SDL_DISABLE);
+end;
+
+procedure termineSDL( var window, rockford, Logo, Logo2 : PSDL_Surface);
+begin
+	SDl_FreeSurface(Logo);
+	SDL_FreeSurface(Logo2);	
+	SDl_FreeSurface(rockford);
+	SDL_FreeSurface(window);
+	SDL_Quit();
 end;
 
 procedure ecrire(var window : PSDL_Surface; txt : String; x, y, taille, R, V, B : Integer);
@@ -718,10 +730,8 @@ var window, rockford, Logo, Logo2 : PSDL_Surface;
 	fin,u, d, r, l,save : Boolean;
 	counter : LongInt;
 begin
-	Logo := IMG_Load('ressources/Top1.png');
-	Logo2 := IMG_Load('ressources/Top2.png');
 	menu(fin,ch1,ch2);
-	initialise(window, rockford);
+	initialiseSDL(window, rockford, Logo, Logo2);
 	randomize();
 
 	niv := random(5) + 1;
@@ -773,6 +783,6 @@ begin
 	until fin or save;
 	if save then
 		SauvegarderNiveau(T, position, positionFin, nbDiamant, nbDiamantFin, Temps);
-	SDL_FreeSurface(window);
-	SDL_Quit();
+	
+	termineSDL(window, rockford, Logo, Logo2);
 end.
