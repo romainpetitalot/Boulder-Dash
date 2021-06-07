@@ -394,7 +394,7 @@ begin
 					end;					
 					'gauche' :
 					begin
-						if T[i-1][j].genre = 0 then
+						if (T[i-1][j].genre = 0)then
 						begin
 							T[i][j].genre := 0;
 							T[i-1][j].genre := 6;
@@ -411,7 +411,7 @@ begin
 					end;					
 					'bas' :
 					begin
-						if T[i][j-1].genre = 0 then
+						if (T[i][j-1].genre = 0) and (T[i-1][j-1].genre <> 0)  then
 						begin
 							T[i][j].genre := 0;
 							T[i][j-1].genre := 6;
@@ -429,7 +429,7 @@ begin
 					end;
 					'droite' :
 					begin
-						if T[i+1][j].genre = 0 then
+						if (T[i+1][j].genre = 0)then
 						begin
 							T[i][j].genre := 0;
 							T[i+1][j].genre := 6;
@@ -640,9 +640,9 @@ end;
 procedure initPapillon(var T : Terrain);
 var i, j:Integer;
 begin
-	for i := 1 to 24 do
+	for i := 1 to 20 do
 	begin
-		for j := 1 to 20 do
+		for j := 1 to 24 do
 		begin
 			if T[i][j].genre = 6 then
 			begin
@@ -712,7 +712,7 @@ end;
 
 var window, rockford, Logo, Logo2 : PSDL_Surface;
 	coord, coordFondHaut : TSDL_Rect;
-	niv, nbDiamant,nbDiamantFin, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2 : Integer;
+	niv, nbDiamant,nbDiamantFin, Temps, TempsInit, reserveTemps, OldTemps,ch1,ch2,affichageDiamantX : Integer;
 	position,positionFin : coordonnees;
 	T : Terrain;
 	fin,u, d, r, l,save : Boolean;
@@ -746,12 +746,16 @@ begin
 	counter := 0;	
 	afficherfond(window, rockford, T, position, True);
 	SDl_Flip(window);
-	SDl_Delay(20);
+	SDl_Delay(100);
 	
 	u := False;	d := False;
 	r := False;	l := False;
 	
-	ecrire(window, IntToStr(nbDiamantFin), 80, 5, 35, 255, 228, 54);
+	if nbDiamantFin>=9 then
+		affichageDiamantX := 64
+	else
+		affichageDiamantX := 80;
+	ecrire(window, IntToStr(nbDiamantFin+1), affichageDiamantX, 5, 35, 255, 228, 54);
 	ecrire(window, IntToStr(ch2)+'-'+IntToStr(niv), 130, 5, 35, 255, 255, 255);
 	
 	TempsInit := SDL_GetTicks() div 1000;

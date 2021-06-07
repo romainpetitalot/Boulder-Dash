@@ -1,128 +1,338 @@
 \section{Analyse du projet}
-Il est probable que vous n'ayez pas besoin d'une autre section dans votre document.
-Vous pouvez donc supprimer celle-ci faire remonter toutes les sous-sections et sous-sous-sections d'un cran.
+    Dans cette première partie, nous allons décrire le projet, présenter les fonctionnalités et conceptions que nous avions initialement réalisées. En outre, nous discuterons des éventuelles modifications apportées pour le rendu final.
     
     \subsection{Cahier des charges}
         \subsubsection{Description du projet}
-            Le groupe a décidé de faire un projet de snake en I4.2 par ce qu'on a pas le choix de faire autre chose.
-            Le snake est un jeu qui… blablabla à vous de faire votre description.
+        Le groupe a décidé de faire un Boulder Dash, car nous y avions déjà tous joué avant ce projet. De plus, les graphismes sont agréables et le jeu est relativement addictif. Ainsi, notre choix s'est rapidement tourné vers ce dernier et les idées de conception du jeu ont été rapides. 
+        \\
+        \\
+        Boulder Dash est un jeu où l'on incarne un petit personnage dont le but est de ramasser des diamants en creusant la terre. 
+        Ce jeu possède différents niveaux dont la difficulté est progressive. Dans ces niveaux, on retrouve des ennemis et des rochers. 
+        Le joueur possède 3 vies, si le joueur se fait écraser par un rocher ou toucher par un ennemi, il perd une vie, au bout de 3 vies perdues la partie du joueur est terminée. Certains niveaux ne possèdent pas de diamants, le joueur doit alors tuer les ennemis du niveau en faisant tomber un rocher sur eux ce qui fera apparaître des diamants. Les diamants peuvent aussi tomber sur d'autres ennemis les tuant à leur tour. Le joueur peut aussi casser des murs pour atteindre des zones bloquées grâce aux rochers.
+        Nous avons aussi la volonté d’ajouter des fonctionnalités facultatives telles que la création de niveau par l’utilisateur ou encore la personnalisation du personnage jouable (ces fonctionnalités sont listées dans la partie suivante).
+
         \subsubsection{Liste des fonctionnalités}\label{sssect:fonctionnalites}
-            Le rendu final de notre projet comportera les fonctionnalités suivantes:
+            Le rendu final de notre projet doit comporter les fonctionnalités suivantes:
+            \vspace{0.2cm}
             \begin{itemize}
-                \item Affichage console
-                \item Choix de la taille du plateau
-                \item Choix de la difficulté
-                \item …
+                \item Déplacement du joueur 
+                \item Chargement des niveaux (mur, terre, bords, rochers) depuis un fichier .txt
+                \item Sauvegarde de la partie 
+                \item Différents niveaux
+                \item Menu
+                \item Victoire (débloquer passage pour terminer niveau)
+                \item Détection de mort (écrasé par un rocher, touché par un ennemi) 
+            \end{itemize}
+            \vspace{0.3cm}
+            Nous avons prévu des fonctionnalités optionnelles, afin d'améliorer le jeu, que nous ferions si le temps le permettait :
+            \vspace{0.2cm}
+            \begin{itemize}
+                \item Création de niveaux par l’utilisateur
+                \item Musique 
+                \item Personnalisation joueur
+                \item Ajout d’ennemi  et/ou de PNJ
+                \item Choix mondes
+                \item Chronomètre 
+                \item Animation mort personnage (si écrasé par un rocher ou touché par un ennemi)
             \end{itemize}
             
-            Nous avons prévu des fonctionnalités optionnelles, qui ne seront implémentées que s'il nous reste du temps à la fin du semestre:
+            \vspace{0.3cm}
+            \textbf{Versions prévues:}
+            
+            V1 (08/04/2021):
             \begin{itemize}
-                \item Coloration de l'affichage
-                \item Jeu multijoueur
-                \item Sauvegarde des scores
-                \item …
+                \item Déplacement du joueur
+                \item Chargement de niveaux depuis des fichiers .txt 
             \end{itemize}
+            \vspace{0.2cm}
             
-            Versions prévues:
-            
-            V1 (15/04/2020):
+            V2(22/04/2021):
             \begin{itemize}
-                \item Affichage du plateau
+               \item Mise en place de différents niveaux
+               \item Sauvegarde de la partie
+               \item Implémentation du menu
+                \item Mise en place de la détection de mort
             \end{itemize}
+            \vspace{0.2cm}
             
-            V2:
+            V2(07/06/2021):
             \begin{itemize}
-                \item …
+               \item Finalisation des fonctionnalités présentes
+               \item Implémentation des fonctionnalités facultatives
+               
             \end{itemize}
 
 
 
     \subsection{Conception globale}
-        Cette section présente la conception globale du programme implémentant les fonctionnalités données en section~\ref{sssect:fonctionnalites}.
-        L'analyse descendante correspondante est donnée en figure~\ref{fig:AD}.
+        Cette section présente la conception globale de notre programme implémentant les fonctionnalités données en section~\ref{sssect:fonctionnalites}.
+        L'analyse descendante correspondante est donnée à la page suivante.
         
-        \begin{figure}[!ht]
-            \centering % Centre horizontalement tout ce qui est dans l'environnement ``figure''
-                \includegraphics[width=0.5\textwidth]{images/AD.eps} % Chemin vers l'image à ajouter
-            \caption{Analyse descendante du projet.} % Légende de l'image
-            \label{fig:AD} % Étiquette pour y faire référence ailleurs dans le document
-        \end{figure}
+        \newpage
         
-        Je vous invite à utiliser le programme dia\footnote{\url{https://fr.wikipedia.org/wiki/Dia_(logiciel)}} pour réaliser votre analyse descendante et vos autres diagrammes.
-        Le format \verb|.eps| est un très bon choix pour exporter les diagrammes faits avec ce programme étant donné qu'il est vectoriel et très bien géré par \LaTeX{}.
+        Voici l'analyse descendante intiale de notre projet :
+        \vspace{0.3cm}
+        
+        \rotatebox{90}{\includegraphics[width=190mm]{images/AD-T.jpg}}
+        
+        Cette analyse descendante a été relativement bien suivie. Cependant, nous avons tout de même changé quelque peu cette dernière. Les principales modifications sont les suivantes : 
+        \\
+        \begin{itemize}
+            \item changement n°1 :
+            Un des changements notable est l'implémentation de différentes unités. Une première unité ("rockfordUtils.pas") a été utilisée pour stocker les différentes structures utilisées tout au long du programme principal. Une seconde unité ("menurockford") a été implémentée permettant de bien séparer le jeu principal du menu et donc de simplifier l'écriture du code pour ces deux parties.
+            \\
+            \item changement n°2 :
+            On peut noter de plus que certaines entrées et sorties ont été modifiées et de nouvelles ont été rajoutées, n'apparaissant pas dans l'analyse descendante, du fait de l'adaptation de notre programme au langage de programmation SDL.
+            \\
+        
+        \end{itemize}
     
+    \newpage
     \subsection{Conception préliminaire}
-        Le contenu de cette section présente la signature des fonctions et procédures de l'analyse descendante, en précisant les entrées, sorties et entrées/sorties.
-        Il peut être intéressant de détailler la signature de certaines fonctions pour justifier certains de vos choix.
+        Le contenu de cette section présente la signature des fonctions et procédures de notre analyse descendante, en précisant les entrées, sorties et entrées/sorties.
         
-        Les types personnalisés employés doivent aussi être présentés et défendus dans cette section.
-        
-    \subsection{Conception détaillée}
-        Pour vous aider à écrire des algorithmes propres en \LaTeX{} un paquet spécifique (\verb|algorithm2e|) a été ajouté par défaut à ce modèle de rapport.
-        Il vous permet d'inclure du pseudo-code dans votre document pour détailler les algorithmes importants de votre programme.
-        Voici un exemple d'un algorithme tiré du projet de morpion du cours d'I2:
-        
-        \begin{algorithm}[H]
-            \SetAlgoLined
-            \Fun{aGagne(g :  Grille): Emplacement}{
-            \Sortie{s'il n'y a aucun gagnant, l'emplacement renvoyé est l'emplacement vide (\_), sinon c'est l'emplacement représentant la couleur du gagnant (X ou O).}
-            \Donnees{i, j: Entier, vainqueur: Emplacement}
-            
-            vainqueur $\leftarrow$ \_\;
-            
-            \tcp{lignes}
-            \Pour{i $\leftarrow$ 1 à 3}{
-                \Si{(g[i][1] = g[i][2]) et (g[i][1] = g[i][3])}{
-                    vainqueur $\leftarrow$ g[i][1]\;
-                }
-            }
-            \tcp{colonnes}
-            \Pour{j $\leftarrow$ 1 à 3}{
-                \Si{(g[1][j] = g[2][j]) et (g[1][j] = g[3][j])}{
-                    vainqueur $\leftarrow$ g[1][j]\;
-                }
-            }
-            
-            \tcp{diagonales}
-            \Si{((g[2][2]= g[1][1]) et (g[2][2]= g[3][3])) ou\\ 
-                ((g[2][2]= g[1][3]) et (g[2][2]= g[3][1]))}{
-                vainqueur $\leftarrow$ g[2][2]\;
-            }
-            
-            \Retour{vainqueur}
-            
-            }
-            \caption{recherche d'un gagnant dans une grille de Morpion}
+        \begin{algorithm}
+            \begin{algorithmic}
+                \Procedure{Jouer}{ }
+                \vspace{0.2cm}
+                \Procedure{GestionCollisions}{E c : Coord, E/S t : Tab, S Coli: booleen}
+                \vspace{0.15cm}
+                \Function{MortEcrase}{t : Tab, c : Coord} : Booléen
+                \EndFunction
+                \Procedure{RecupereDiamant }{E c : Coord, E/S t : Tab, S Dia : Booléen }
+                \EndProcedure
+                \Procedure{CreuseTerre}{E c : Coord, E/S t : Tab, S Terre: Booléen }
+                \vspace{0.2cm}
+                \EndProcedure
+                \EndProcedure
+                \Function{victoire}{c : Coord} : Booléen
+                \vspace{0.2cm}
+                \EndFunction
+                \Procedure{Deplacement}{ E/S c : Coord}
+                \vspace{0.15cm}
+                \Procedure{DeplacementJoueur}{E/S cPlayer : Coord}
+                
+                \EndProcedure
+                \Procedure{DeplacementEnnemi}{E/S cEnnemy : Coord}
+                
+                \EndProcedure
+                
+                \EndProcedure
+                \vspace{0.2cm}
+                \Procedure{InitMapNiveau}{E t : tab}
+                \vspace{0.2cm}
+                
+                \EndProcedure
+                \EndProcedure
+                \Procedure{ChargerSauvegarder}{E f : txt, S t : Tab}
+                \EndProcedure
+                \vspace{0.2cm}
+                \Procedure{Menu}{ }
+                \vspace{0.15cm}
+                \Procedure{Tutoriel}{ }
+                \EndProcedure
+                \Procedure{ChoixNiveau}{}
+                \EndProcedure
+                \Procedure{CreationNiveau}{t : Tab}
+                \EndProcedure
+                
+                \EndProcedure
+            \end{algorithmic}
         \end{algorithm}
         
-        Le mot-clé \enquote{\textbf{Données}} est utilisé pour déclarer les variables utilisées dans l'algorithme.
+        A nouveau, quelques changements ont eu lieu en pratique : 
+        \begin{itemize}
+            \item changement n°1 : La procédure tutoriel n'a pas été réalisée compte tenu de la simplicité du jeu, la procédure CreationNiveau n'a pas été implémentée dans notre code, car ce n'était pas pertinent pour notre jeu et nous avons préféré nous focaliser sur des aspects plus importants du jeu.
+            \item changement n°2 La procédure RecupererDiamant a été directement mise dans celle du déplacement du joueur car c'était plus simple à coder.
+            \item changement n°3 Comme cité précédemment, l'utilisation de la bibliothèque SDL nous a contraint à modifier les entrées et sorties de chacune des procédures et fonctions.
+        \end{itemize}
         
-        La documentation du paquet \LaTeX{} pour écrire des algorithmes (\verb|algorithm2e|) est disponible à l'adresse suivante: \url{http://ctan.mines-albi.fr/macros/latex/contrib/algorithm2e/doc/algorithm2e.pdf}(voir notamment la p.41 et les suivantes pour les mots-clés a utiliser pour écrire votre algo en français).
-        J'ai implémenté en plus du paquet de base les commandes \verb|\fun{}{}| pour les fonctions et \verb|\proc{}{}| pour les procédures.
-        Ces commandes prennent en premier paramètre le nom de la fonction et ses paramètres et en second paramètre le corps de la fonction.
-    \subsection{Implémentation}
-        Il est aussi possible en \LaTeX{} d'inclure du code source dans un document.
         
-        \begin{lstlisting}[language=Pascal,frame=single,caption=code source de la fonction aGagne.]
-function aGagne(g :  Grille):Emplacement;
-var i,j : Integer; vainqueur: Emplacement;
-begin
-   vainqueur := _;
+        De plus, nous avons utilisé de nombreux types structurés dans notre projet, à commencer par les coordonnées du Menu (coordMenu), les coordonnées du joueur (coordonnees) mais aussi un type block pour définir le tableau de structures Terrain qui était un composé de block pour représenter la grille de jeu.
+        
+        
+        
+        
+        
+        
+        
+    \subsection{Procédures ou fonctions importantes}
+       Les deux procédures que nous avons retenues sont :
+       \\
+       \\
+       - La procédure "chargement"
+       \\
+       \\
+       - La procédure "tombePierre"
+        \\
+        \\
+        Ces deux procédures nous semblaient pertinentes, car elles sont nécessaires au bon fonctionnement de notre programme et leur implémentation s'est avérée quelquefois plus complexe que l'on pensait.
+        \\
+        \\
+        La difficulté principale dans la procédure chargement était de charger toutes les données du niveau notamment la position du personnage, de l'arrivée, et l'ensemble des objets du niveau. De plus, la procédure SauvegarderNiveau devait être complémentaire à cette procédure pour charger des fichiers sauvegardés et se souvenir, par exemple, du nombre de diamant déjà récupérés ou du temps écoulé.
+        Quant à la procédure tombePierre, la difficulté résidait dans le fait de gérer tous les types d'éboulements (par le bas et les côtés) pour les pierres et les diamants et les différents délais d'affichage pour chacun des mouvements et également les collisions avec notre personnage et les PNJ. 
+        \\
+        \\
+\newpage
 
-   {lignes}
-   for i := 1 to 3 do
-   	 if (g[i][1] = g[i][2]) and (g[i][1] = g[i][3]) then 
-		vainqueur := g[i][1];
-	
-   {colonnes}
-   for j := 1 to 3 do
-   	 if (g[1][j] = g[2][j]) and (g[1][j] = g[3][j]) then 
-		vainqueur := g[1][j];
-   
-   {diagonales}   
-   if ((g[2][2]= g[1][1]) and (g[2][2]= g[3][3])) or
-		((g[2][2]= g[1][3]) and (g[2][2]= g[3][1])) then
-			vainqueur := g[2][2];
-   aGagne := vainqueur;
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+bgcolor=black!75,	
+fontsize=\footnotesize,
+linenos
+]
+{pascal}
+//Procedure chargement du terrain de jeu
+procedure chargement (name : string; var T : Terrain;var posRF, posFin : coordonnees;var 
+nbDiamant, nbDiamantFin, reserveTemps : Integer);
+var fic	:Text;
+	i, j : Integer;
+	str: String;
+begin
+	assign(fic,name + '.txt');
+	reset(fic);
+	i:=1;
+	read(fic, posRF.x);//On commence par lire les données du niveau
+	readln(fic, posRF.y);
+	read(fic, posFin.x);
+	readln(fic, posFin.y);
+	read(fic, nbDiamant);
+	readln(fic, nbDiamantFin);
+	readln(fic, reserveTemps);
+	while (not eof(fic)) do
+	begin
+		readln(fic,str);
+		for j := 1 to 24 do
+		begin
+			T[i][j].genre := StrToInt(str[j]);//On lit la map
+			T[i][j].mouvement := '';
+		end;
+		i:=i+1;	
+	end;
+	close(fic);
+	T[posRF.y][posRF.x].genre := 0;//Notre personnage part sur une case vide
+	initPapillon(T);//Calcul de la direction dans laquelle les papillons vont devoir partir
 end;
-        \end{lstlisting}
+\end{minted}
+        
+\newpage
+
+\begin{minted}
+[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.1,
+bgcolor=black!75,	
+fontsize=\footnotesize,
+linenos
+]
+{pascal}
+//Procedure tombePierre permettant la chute de la pierre
+procedure tombePierre(var window, rockford : Psdl_Surface; var T:Terrain; position : coordonnees;
+nomObjet:string; var nbDiamant : Integer; var fin : Boolean );
+var i, j, numeroObj, coordY : Integer;
+begin
+	if nomObjet = 'Pierre' then
+		numeroObj := 3
+	else if nomObjet = 'Diamant' then
+		numeroObj := 4;
+	
+	for i := 1 to largueur do
+	begin
+		for j := 1 to longueur do
+		begin
+			if T[i][j].mouvement = nomObjet then
+			begin
+				T[i+1][j].genre := numeroObj;
+				T[i][j].mouvement := '';
+				afficherfond(window, rockford, T, position, True);
+				if (position.y = i+2) and (position.x = j) then 
+					fin := True;
+				if T[i+2][j].genre = 6 then
+				begin
+					mortPapillon(T, j,i+1, nbDiamant, position);
+					mortPapillon(T, j,i+2, nbDiamant, position);
+					mortPapillon(T, j,i+3, nbDiamant, position);
+				end;
+			end;
+			if T[i][j].genre = numeroObj then
+			begin
+				if (T[i+1][j].genre = 0) and not((position.y = i+1) and 
+				(position.x = j)) then
+				begin
+					T[i][j].genre := 0;
+					T[i][j].mouvement := nomObjet;
+					afficherfond(window, rockford, T, position, True);
+					SDL_Flip(window);
+				end
+				else if (T[i+1][j].genre = 6)then
+				begin
+					mortPapillon(T, j,i, nbDiamant, position);
+					mortPapillon(T, j,i+1, nbDiamant, position);
+					mortPapillon(T, j,i+2, nbDiamant, position);
+				end;
+			end;					
+			if T[i][j].genre = numeroObj then //Les éboulements sur le côté
+			begin
+				if (T[i+1][j].genre = 3) or (T[i+1][j].genre = 4) then
+				begin
+					coordY := i+1;
+					while (T[coordY][j].genre = 3)or(T[coordY][j].genre = 4) do
+					//Pour verif que la pierre en dessous ne tombe pas
+					begin
+						coordY := coordY +1;					
+					end;
+					if T[coordY][j].genre <> 0 then
+					begin
+						if (T[i+1][j+1].genre=0)and(T[i][j+1].genre=0)and
+						not((position.y=i+1)and(position.x=j+1))and
+                        not((position.y=i)and(position.x=j+1))
+                        and(T[i][j+1].mouvement='')then
+						begin
+							T[i][j+1].genre := numeroObj;
+							T[i][j].genre := 0;
+							afficherfond(window,rockford,T,position,True);
+							SDl_delay(50);
+							T[i][j+1].genre := 0;
+							T[i+1][j+1].genre := numeroObj;
+						end
+						else if(T[i+1][j-1].genre=0)and(T[i][j-1].genre=0)and
+						not((position.y=i+1)and(position.x=j-1))and
+					    not((position.y=i)and(position.x=j-1))
+					    and(T[i][j-1].mouvement='')then
+						begin
+							T[i][j-1].genre := numeroObj;
+							T[i][j].genre := 0;
+							afficherfond(window,rockford,T,position,True);
+							SDl_delay(50);
+							T[i][j-1].genre := 0;
+							T[i+1][j-1].genre := numeroObj;
+						end;
+					end;
+				end;
+			end;
+		end;
+	end;
+	afficherfond(window, rockford, T, position, True);
+end;
+\end{minted}
+        
+\newpage
+   
+    \subsection{Partie développement}
+        \subsubsection{Les unités et le programme principal}
+            \begin{itemize}
+                \item {Unité rockfordUtils} : Cette unité comprend toutes les différentes constantes et les différents types utilisés dans notre projet. Pour les constantes, on y retrouve par exemple la largeur et la longueur de la fenêtre de jeu. Pour les différentes unités, nous avons notamment les coordonnées du joueur en x et y, les coordonnées du menu en x et y, mais aussi avec une variable représentant le choix du joueur dans le menu. Puis un tableau Terrain composé du type "block" qui représente les différentes cases de notre jeu.
+                \\
+                \item {Unité menurockford} : Cette unité est composée de plusieurs procédures d'affichages des différentes parties du menu, avec le fond mais aussi le curseur (représenté par le personnage rockford), d'une procédure pour la gestion du clavier de l'utilisateur et deux procédures pour gérer le son. Toutes ces procédures sont regroupées dans la procédure menu qui les combine. La procédure menu est ensuite utilisée dans le code principal du jeu. On peut également citer les deux dernières procédures : ProcessKeyFin et choixFin qui permettent de quitter le jeu en le sauvegardant ou non.
+                \\
+                \item {Programme principal} : Le programme principal du jeu qui regroupe toutes les procédures de gestion du jeu, celles liées aux déplacements du joueur, des ennemis ou des pierres mais aussi des procédures d'affichages de tous les blocs et celle pour le temps de jeu. Puis, nous avons les procédures pour sauvegarder et charger le jeu à partir de fichier texte qui se situe dans un dossier intitulé "Ressources". Le code principal initialise les variables, reprend le menu puis charge le jeu. Ensuite, le jeu se fait grâce à une itération sur le déplacement du joueur et des ennemis. Enfin, suivant le choix du joueur, si ce dernier meurt ou gagne, le jeu s'arrête. En outre, s'il appuie sur échap en pleine partie, il peut choisir de sauvegarder le jeu ou de reprendre la partie.
+            \end{itemize}
+        
+        \subsubsection{Utilisation de la SDL}
+        La bibliothèque SDL était essentielle pour notre projet. En effet la gestion du clavier et l'affichage vidéo permettent au joueur d'avoir une meilleure expérience que sur une version avec un terminal. Néanmoins les procédures et fonctions ont toutes été pensées au début sans SDL, ce n'est que pendant le développement et l'écriture du code sur Pascal que nous avons rajouté les éléments liés à la SDL dans notre code. 
+        
+ 

@@ -15,11 +15,16 @@
 \usepackage[left=2cm, right=2cm, top=4.7cm, bottom=5cm]{geometry}
 \usepackage{fancyhdr}
 \usepackage{color}
+\usepackage{xcolor}
 \usepackage{listings}
 \usepackage{moreverb}
 \usepackage[hidelinks]{hyperref}
 \usepackage{csquotes}
 \usepackage[vlined,ruled,french]{algorithm2e}
+\usepackage[noend]{algpseudocode}
+\usepackage{fancybox}
+\usepackage{enumitem}
+
     \SetKwProg{Fun}{Fonction}{}{} % Création du mot-clé fun pour les fonctions dans les algos
     \SetKwProg{Proc}{Procédure}{}{} % Création du mot-clé proc pour les procédures dans algos
 \usepackage{listings}
@@ -32,10 +37,10 @@
 \hypersetup
 {
 %%   Champs dans les propriétés du document
-   pdftitle={}, % titre dans les proprietes du pdf
-   pdfauthor={}, % auteur dans les proprietes du pdf
-   pdfsubject={}, % sujet dans les proprietes du pdf
-   pdfkeywords={}, % mots-cles dans les proprietes du pdf
+   pdftitle={Rapport d'I4-2 - Boulder Dash - Groupe 1}, % titre dans les proprietes du pdf
+   pdfauthor={Tom TESNIERE, Romain PETITALOT, Maxime DEFROMERIE, Julie LANGRAND, Victor LEGER}, % auteur dans les proprietes du pdf
+   pdfsubject={Rapport d'informatique}, % sujet dans les proprietes du pdf
+   pdfkeywords={Pascal, programmation, SDL, Boulder Dash, Rockford}, % mots-cles dans les proprietes du pdf
 %%   Liens
 %    linkbordercolor=  %couleur des cadres autour des liens
 }
@@ -53,7 +58,7 @@
 	
 	\put(-60, 60)
 	{
-		\includegraphics[width=100mm]{images/INSALogo}
+		\includegraphics[width=100mm]{images/insa.png}
 	}
 % 	\put(-78,-725)
 % 	{
@@ -112,7 +117,7 @@
 		}
 		\put(-55,65)
 		{
-			\includegraphics[width=50mm]{images/INSALogoBlanc}
+			\includegraphics[width=50mm]{}
 		}
 		\end{picture}
 	}
@@ -128,10 +133,10 @@
 		{
 			\color{GRIS}{\thepage}
 		}
-		\put(-70,-100)
+		\put(75,-100)
 		{
 %   Pour mettre une image - un logo - en bas a droite de chaque page		
-			\includegraphics[height=17.5mm]{images/#1}
+			\includegraphics[height=15mm]{images/#1}
 		}
 % 		\put(130,-100)
 % 		{

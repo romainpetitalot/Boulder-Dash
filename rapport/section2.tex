@@ -1,83 +1,40 @@
-\section{Exemple de section}
+\newpage
+\section{Apport du Projet}
 
-    \subsection{Comment apprendre le \LaTeX}
-        L'usage du \LaTeX{} peut être déroutant au début (cf. figure~\ref{chien}), cette approche de la composition de document étant très loin de ce que l'on fait lorsque l'on utilise des logiciels comme Microcrotte Office ou Libre Office.
-        Sans rentrer dans les détails, il faut voir le \LaTeX{} comme un outil permettant de séparer \emph{le fond} (ce que vous allez mettre dans votre document), de \emph{la forme} (comment le fond va apparaître dans le document final).
-
-        \begin{figure}[!ht]
-            \centering % Centre horizontalement tout ce qui est dans l'environnement ``figure''
-                \includegraphics[width=0.5\textwidth]{images/tech-support-dog.jpg} % Chemin vers l'image à ajouter
-            \caption{Toi en train d'apprendre le \LaTeX.} % Légende de l'image
-            \label{chien} % Étiquette pour y faire référence ailleurs dans le document
-        \end{figure}
+    \subsection{Apprentissage du \LaTeX}
+        Afin de réaliser notre rapport, nous avons suivi les directives données par les professeurs, à savoir utiliser le \LaTeX{}.
         
-        Quand vous écrivez du code \LaTeX, vous vous contentez en grande majorité de décrire le fond:
-        je veux un paragraphe qui contient ce texte (on sépare deux paragraphe de texte par une ligne vide), je commence une nouvelle section/sous-section/sous-sous-section ici (en utilisant la commande \verb|\section{}|/\verb|\subsection{}|/\verb|\subsubsection{}|), je veux mettre en valeur \emph{cette partie de phrase} (en utilisant la commande \verb|\emph{}|)…
-        La forme est gérée plus tard, par un modèle de document par défaut que vous pouvez éventuellement modifier indépendamment du fond.
+        \subsubsection{Découverte de ce langage}
+            \paragraph{Site Overleaf} Nous avons fait le choix pour ce projet d'utiliser le site/application Overleaf afin de pouvoir modifier notre rapport simultanément et travailler ensemble. De plus, Overleaf permet de compiler le code directement afin d'avoir un aperçu sur la moitié de l'écran, ce qui est extrêmement pratique lorsque l'on commence à coder en \LaTeX{} car il n'est pas aisé de se représenter le rendu. Enfin, ce site fonctionne par projet, il est donc facile de partager tout le projet à son groupe et de travailler avec les mêmes fichiers indispensables tels que des images.
+            
+            \paragraph{Avantage du \LaTeX{}} Le \LaTeX{} a été quasiment indispensable pour la rédaction de notre cahier des charges et du rapport. Effectivement, nous avons dû insérer du code, qu'il s'agisse de pseudo-code ou de pascal, ce qui aurait été bien plus complexe avec un éditeur comme Word ou Libre office. Le \LaTeX{} permet également des rendus de qualité et il est important pour nous de découvrir ce langage.
+            
+            \paragraph{Les bases du \LaTeX{}} Pour la plupart des membres du groupe, nous n'avions que très peu ou jamais codé en \LaTeX{}. Ainsi, la découverte réelle de ce langage a été réalisée lors de l'élaboration du cahier des charges. Ce dernier étant assez rapide et condensé, il a permis de découvrir doucement les bases du \LaTeX{}. 
 
-        La meilleure manière d'apprendre à coder en \LaTeX{} est \emph{de bricoler du code \LaTeX{} et de voir ce qu'il se passe.}
-
-        \subsubsection{Quelques bonnes pratiques}
-            Je donne ici quelques lignes directrices qui, si elles sont respectées, vous éviteront un certain nombre de difficultés lors de l'écriture d'un document \LaTeX{}.
         
-            \paragraph{Bien organiser son code source}
-                Écrire du \LaTeX{}, c'est écrire du \emph{code source}.
-                Comme vous l'avez appris à l'INSA, un bon code source doit être proprement mis en forme.
-                Je vous recommande, lorsque vous écrivez du texte, d'écrire une phrase par ligne, cela rendra votre code bien plus lisible et simplifiera l'utilisation d'un logiciel de gestion de sources comme git.
-                En ce qui concerne la lisibilité du code source, pensez à \emph{indenter} votre code afin de mieux vous y repérer.
+        \subsubsection{Approfondissement}
+            \paragraph{Besoins supplémentaires} Après avoir acquis les bases indispensables à la création d'un document telles que l'ajout de titres, sections, sous-sections, paragraphes ; nous avons dû apprendre à insérer des images, des algorithmes, des parties de code. L'essentiel de cet apprentissage s'est fait grâce aux explications que l'on peut trouver sur le net. En outre, rédiger un rapport sur un seul document \LaTeX{} n'aurait pas été lisible et compréhensible, d'autant plus que nous l'avons rédigé à cinq. Organiser la rédaction du rapport s'est alors révélé très utile. Nous avons décomposé le rapport en plusieurs sections et avons fait les imports de packages dans un autre document. Cela a permis d'apporter beaucoup de lisibilité et de ne pas modifier involontairement les parties du code déjà réalisées.
             
-             \paragraph{Compiler du \LaTeX{}}
-                Étant donné que le \LaTeX{} est du code source, celui-ci doit être compilé (à l'aide de la commande \verb|pdflatex| par exemple).
-                Comme pour un programme en Pascal, à la compilation il est possible que des messages d'avertissement ou d'erreur s'affichent.
-                La plupart des messages d'avertissement ne posent pas de problèmes (le document que vous lisez en émet un certain nombre à la compilation), cependant les messages d'erreur sont beaucoup plus graves et doivent être résolus pour obtenir un document final correct et complet.
-                Ce n'est pas par ce qu'à la fin de votre compilation vous obtenez un document que la compilation s'est passée sans erreur.
-                Dans la plupart des cas, aucun document n'est produit, mais certains éditeurs de \LaTeX{} \enquote{forcent} la compilation jusqu'au bout.
-                Je vous invite donc à être très attentif à comment se déroule la compilation de votre document de manière à ne pas passer à côté d'erreurs de compilation.
-                Je vous invite aussi à \emph{compiler votre document aussi souvent que possible}, cela afin de repérer le plus tôt possible les erreurs de compilation dans le code source que vous tapez.
-        
-        \subsubsection{Ressources externes}\label{sssect:ressources_externes}
-            Pour vous aider dans votre aventure d'écriture de beaux documents, voici quelques ressources sur lesquelles vous pouvez vous appuyer pour rechercher de l'information.
-            Je vous recommande d'y avoir recours quand le besoin s'en fait ressentir lorsque vous rédigez votre document.
             
-            \paragraph{Wikilivres}
-                Les wikilivres sur le \LaTeX{} (en français et en anglais) sont particulièrement bien rédigés et traitent un grand nombre de cas de figure face auxquels on peu se retrouver:
-                \begin{itemize}
-                \item En français: \url{https://fr.wikibooks.org/wiki/LaTeX}
-                \item En anglais: \url{https://en.wikibooks.org/wiki/LaTeX}
-                \item Le vadémécum du livre français vaut le détour: \url{https://fr.wikibooks.org/wiki/LaTeX/Vad%C3%A9m%C3%A9cum}
-                \end{itemize}
-            
-            \paragraph{\LaTeX{} stack exchange}
-                Le site internet \url{https://tex.stackexchange.com/} est un espace dédié aux questions/réponses sur la thématique du \LaTeX{}.
-                Les réponses y sont souvent correctes et bien documentées (mais pas toujours! Faites preuve de recul.).
-                Les sujets abordés varient grandement en termes de complexité, à vous de vous y retrouver.
+            \paragraph{Difficultés rencontrées} Nous avons pu utiliser un modèle de rapport en \LaTeX{} fourni par les professeurs. Celui-ci nous a beaucoup aidé notamment pour la structure du rapport. Cependant, nous avons tout de même rencontré des difficultés comme pour importer des images, notamment l'analyse descendante qui a une taille importante, mais aussi l'insertion de code. Pour réussir à surpasser la difficulté de ce dernier point, certains membres du groupe ont appris à utiliser le package minted. 
+            \newline
+            De plus, nous avons rencontré de nombreuses difficultés lors de l'implémentation de notre jeu, notamment, avec l'utilisation de la SDL. En effet, dans un soucis de réalisme, pour que notre jeu soit le plus agréable possible à jouer, la gestion de l'affichage et des délais des objets de notre jeu était la partie la plus compliquée à implémenter, particulièrement lors des éboulements. De plus, il y avait beaucoup de petits détails à prendre en compte qui ne paraissaient pas très importants individuellement, mais qui, additionnés, transforment l'expérience de jeu, par exemple, le curseur quand on appuie sur échap en pleine partie, ou la gestion du chrono et des pauses quand on est dans le menu. 
                 
-                Petite mise en garde en passant: vous copiez-collez du code depuis internet \emph{à vos risques et périls}.
-                Si vous ne comprenez les commandes que vous utilisez dans votre code, vous ne comprendrez pas les erreurs que celui-ci produit.
-                Ce n'est pas par ce qu'une personne, sur internet, à une moment donné, à proposé une idée pour faire une chose que cette idée est la bonne pour faire ce que vous voulez.
-            
-            \paragraph{Le Comprehensive \TeX{} Archive Network}
-                Pour les braves.
-                Si vous souhaitez comprendre dans le détail comment un paquet \LaTeX{} fonctionne et comment l'utiliser, vous trouverez sa documentation sur le site \url{https://www.ctan.org/}.
-                C'est souvent très instructif mais il faut être un minimum à l'aise avec le \LaTeX{} pour se plonger dans ce type de documentation.
 
 
 
-
-    \subsection{Comment ne pas apprendre le \LaTeX}
-        Comme dit précédemment, l'apprentissage du \LaTeX{} se fait par la \emph{pratique}.
-        Essayer d'apprendre à utiliser ce langage en parcourant uniquement les références données dans la section~\ref{sssect:ressources_externes} sans jamais s'aventurer à écrire du code ne vous apportera rien.
+    \subsection{Travail en groupe}
         
-        Si à un moment vous êtes bloquez et n'arrivez pas à vous en sortir même avec l'aide de vos camarades, vous pouvez solliciter de l'aide soit auprès d'un enseignant en TP, soit éventuellement sur internet.
-        Soyez conscient que le code que vous avez écrit \emph{vous appartient}.
-        Vous en êtes responsables.
-        Si vous demandez un appui extérieur, assurez-vous de montrer que vous avez cherché à comprendre et résoudre le problème par vous-même.
-        Envoyer par mail ou sur un forum un code source qui ne compile pas en demandant à ce que votre interlocuteur le répare à votre place est le meilleur moyen de vous le mettre à dos et de recevoir un lapin pancake comme réponse (cf. figure~\ref{lapin}).
+        \subsubsection{Découverte et utilisation de Gitlab} L'utilisation de Gitlab nous a été imposé par nos professeurs. Nous n'avions jamais utilisé Gitlab et les débuts sur ce logiciel étaient un peu compliqués, notamment pour comprendre le fonctionnement des différentes commandes. Malgré ces quelques complications, nous avons pu apprendre, à force d'utiliser les commandes, à comprendre leurs fonctions. 
         
         
-        \begin{figure}[!ht]
-            \centering % Centre horizontalement tout ce qui est dans l'environnement ``figure''
-                \includegraphics[width=0.5\textwidth]{images/pancake-bunny.jpg} % Chemin vers l'image à ajouter
-            \caption{Ma réponse quand on me pose une question sur du \LaTeX{} sans avoir essayé de chercher une solution par soi-même.} % Légende de l'image
-            \label{lapin} % Étiquette pour y faire référence ailleurs dans le document
-        \end{figure}
+        \subsubsection{Mise en accord sur les fonctionnalités} Pour les différentes fonctionnalités attendues, chacun a proposé ses idées et nous nous sommes mis d'accord pour savoir si c'était réalisable et si cela rentrait dans les fonctionnalités obligatoires ou facultatives. 
+        
+        
+        \subsubsection{Répartition du travail en fonction des aptitudes}
+        Concernant la répartition du travail au sein du groupe, nous nous sommes réparti les différentes tâches en fonction des compétences de chaque membre du groupe. Les missions principales de ce projet ont été la rédaction du cahier des charges, de l'analyse descendante et du rapport, mais aussi l'écriture du code dans le langage de programmation demandé.
+        
+         \subsubsection{Limitations et perspectives}
+        Tout d'abord, l'aspect à distance de notre projet a rendu très difficile le travail de groupe et nous avons dû nous organiser en ligne sur Discord et Messenger. Ensuite, le suivi des séances avec le professeur était tout le temps à distance et nous n'avons pas eu de véritable retour sur notre avancée sur le projet. Enfin, concernant les perspectives, nous avions établi plusieurs fonctionnalités facultatives dans notre cahier des charges, mais que, faute de temps, nous n'avons pas mis dans notre rapport. C'est pourquoi nous voudrions les reprendre par la suite pour les intégrer dans notre Boulder Dash.
+        
+        

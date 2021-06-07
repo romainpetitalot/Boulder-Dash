@@ -1,30 +1,34 @@
 \documentclass[11pt,a4paper]{article}
 
 \usepackage{classeRapport}
+\usepackage{minted}
+\usemintedstyle{native} %attention l'utilisation de minted n'est pas évidente regarde des tutos si ça bug
+%Meilleur mise en page
+
 
 \begin{document}
 
 \PageDeGarde	
-{business-cat.jpg} % image sur la page de garde
-{Modèle de rapport \LaTeX{}} % titre principal
-{Pour les aventuriers\\et ceux qui n'ont pas le choix} % sous-titre
-{Prénom \textsc{Nom}\\
-Prénom \textsc{Nom}\\
-Prénom \textsc{Nom}} % nom
-{Module – Département – Année} % bas de page
+{BoulderDash2.png} % image sur la page de garde
+{Rapport de projet I4-2} % titre principal
+{Boulder Dash} % sous-titre
+{Maxime \textsc{Defromerie}\\
+Julie \textsc{Langrand}\\
+Victor \textsc{Léger}\\
+Romain \textsc{Petitalot}\\
+Tom \textsc{Tesniere}} % nom
+{I4-2 – STPI2 – 2020-2021} % bas de page
 
 
-\Page{INSALogo} % logo de bas de page (en bas a droite)
-
+\Page{insa.png} % logo de bas de page (en bas a droite)
 \tableofcontents
 
 \clearpage % Pour faire un saut de page propre
 \section*{Introduction} % L'astérisque est pour que la section ne soit pas numérotée
 \addcontentsline{tod}{section}{Introduction} % Cette commande ajoute la section à la table des matières malgré le fait qu'elle ne soit pas numérotée
 
-    Ce document a pour but de fournir une base aux étudiants souhaitant rédiger un rapport en \LaTeX.
-    Il a été conçu dans le but d'être utilisé pour les projets d'I4.2 mais peut très facilement être réutilisé pour d'autres projets, que ce soit en STPI ou en département.
-    Il n'a pas vocation à être exhaustif sur comment utiliser le \LaTeX{} pour écrire un rapport, mais tente de donner suffisamment de ressources pour que des étudiants curieux et débrouillards puissent s'en sortir sans trop d'égratignures.
+    Au cours du semestre 4 de STPI2, nous avons réalisé un projet informatique tout au long du module d'I4-2. Pour ce projet, nous avions le choix entre réaliser soit le jeu Boulder Dash soit le jeu Frogger. Notre choix s'est porté sur le jeu Boulder Dash.
+    \paragraph{} Ce projet mêle différentes compétences et il est basé sur l'organisation pour le travail en groupe. Effectivement, nous verrons que l'utilisation de Gitlab a permis de travailler plus facilement sur le projet et tous en même temps. En outre, développer le jeu Boulder Dash a permis de mieux comprendre comment créer un jeu en utilisant la SDL et de renforcer nos compétences en programmation (ici en pascal). La rédaction de ce rapport nous a conduit à utiliser le \LaTeX  afin de séparer le fond de la forme, ce qui est parfait pour un rapport de ce type.
 
 
 \clearpage % Pour faire un saut de page propre
@@ -36,7 +40,8 @@ Prénom \textsc{Nom}} % nom
 
 \section{Conclusion}
 
-    J'espère que ce modèle de document vous sera utile pour apprendre le \LaTeX{} et faire de beaux documents pour vos rapports, à l'INSA et ailleurs!
+    Pour conclure, ce projet d'I4-2 nous a permis de développer de nombreuses compétences et fut une expérience enrichissante pour l'ensemble du groupe. Néanmoins, nous avons rencontré plusieurs difficultés au cours de notre projet. En effet, le travail à distance empêchait une bonne cohésion d'équipe et cela a été difficile de se coordonner au début du projet. Par la suite, pour le code, certains avaient déjà coder en SDL, c'est pourquoi ils ont aidé les personnes qui avaient plus de mal avec cette bibliothèque. 
+    Au cours de ce projet, nous avons eu l'occasion de développer notre expérience dans le travail de groupe qui est une des compétences majeures d'un ingénieur aujourd'hui. De plus, nous avons renforcé nos connaissances et compétences en programmation avec l'utilisation du langage de programmation SDL et Pascal. L'utilisation des bibliothèques SDL fut une première approche pour certains et pour d'autres a permis l'approfondissement de leurs compétences. Enfin l'utilisation de nouveaux outils tels que Gitlab ou encore l'écriture du rapport en \LaTeX a permis à l'ensemble du groupe la maîtrise d'outils s'avérant nécessaire pour la suite de notre cursus.
 
 
 \clearpage % Pour faire un saut de page propre
@@ -44,10 +49,10 @@ Prénom \textsc{Nom}} % nom
 \section*{Sources} % L'astérisque est pour que la section ne soit pas numérotée
 \addcontentsline{toc}{section}{Sources} % Cette commande ajoute la section à la table des matières malgré le fait qu'elle ne soit pas numérotée
     \begin{itemize}
-        \item Photo de la page de garde: \url{https://knowyourmeme.com/photos/100097-business-cat}
-        \item Photo du chien page~\pageref{chien}: \url{https://knowyourmeme.com/photos/234142-i-have-no-idea-what-im-doing}
-        \item Photo de lapin avec un pancake sur la tête~\pageref{lapin}: \url{https://knowyourmeme.com/photos/33054-pancake-bunny}
+        \item Photo de la page de garde: \url{http://emultest.free.fr/screenshot/nes/boulderdash1.png}
     \end{itemize}
+
+
 
 
 \end{document}
